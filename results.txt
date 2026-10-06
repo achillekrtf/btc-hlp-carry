@@ -1,0 +1,59 @@
+
+=== main (2024-01 to now): 2024-01-01 -> 2026-10-06 ===
+                                   final  total_return   cagr    vol  sharpe  max_dd  max_ltv  liquidations  interest_paid  hlp_earned
+BTC buy & hold                193573.824         0.936  0.271  0.471   0.635  -0.530    0.000           0.0          0.000       0.000
+Carry 40%, static             224521.798         1.245  0.341  0.423   0.784  -0.466    0.449           0.0       8002.125   38950.099
+Carry 40%, monthly rebal      236186.385         1.362  0.365  0.469   0.789  -0.512    0.519           0.0      14875.995   51255.050
+1.4x BTC (borrow to buy BTC)  198549.734         0.985  0.282  0.662   0.628  -0.672    0.371           0.0      14642.134       0.000
+
+=== full (2023-06 to now): 2023-06-01 -> 2026-10-06 ===
+                                   final  total_return   cagr    vol  sharpe  max_dd  max_ltv  liquidations  interest_paid  hlp_earned
+BTC buy & hold                318891.295         2.189  0.414  0.459   0.874  -0.530    0.000           0.0          0.000       0.000
+Carry 40%, static             387040.205         2.870  0.499  0.394   1.095  -0.451    0.432           0.0       9657.543   77806.452
+Carry 40%, monthly rebal      458757.734         3.588  0.577  0.456   1.115  -0.512    0.519           0.0      30640.878  120080.033
+1.4x BTC (borrow to buy BTC)  382766.870         2.828  0.494  0.643   0.865  -0.672    0.371           0.0      29866.099       0.000
+
+=== last 12m: 2025-10-07 -> 2026-10-06 ===
+                                  final  total_return   cagr    vol  sharpe  max_dd  max_ltv  liquidations  interest_paid  hlp_earned
+BTC buy & hold                70483.776        -0.295 -0.295  0.447  -0.636  -0.525    0.000           0.0          0.000       0.000
+Carry 40%, static             65153.717        -0.348 -0.349  0.345  -1.166  -0.489    0.733           1.0       1268.300    4912.998
+Carry 40%, monthly rebal      72843.218        -0.272 -0.272  0.445  -0.568  -0.509    0.519           0.0       1261.534    3872.262
+1.4x BTC (borrow to buy BTC)  56427.489        -0.436 -0.436  0.640  -0.629  -0.669    0.371           0.0       1031.107       0.000
+
+=== Yearly HLP return vs Aave USDC borrow ===
+      hlp_return  avg_borrow_apr  btc_return  days  spread
+day                                                       
+2023      0.4781          0.0576      0.5767   214  0.4444
+2024      0.5797          0.0905      1.1181   366  0.4890
+2025      0.1703          0.0585     -0.0734   365  0.1118
+2026      0.0769          0.0439     -0.0364   279  0.0433
+
+=== LTV sensitivity, monthly rebalanced carry, main period ===
+      cagr    vol  sharpe  max_dd  max_ltv  liquidations  crash_to_liquidate
+0.0  0.271  0.471   0.635  -0.530    0.000           0.0               1.000
+0.2  0.317  0.470   0.713  -0.521    0.260           0.0               0.744
+0.3  0.341  0.469   0.751  -0.516    0.389           0.0               0.615
+0.4  0.365  0.469   0.789  -0.512    0.519           0.0               0.487
+0.5  0.390  0.468   0.827  -0.507    0.649           0.0               0.359
+0.6  0.284  0.459   0.663  -0.563    0.762           4.0               0.231
+0.7  0.171  0.448   0.464  -0.579    0.819          16.0               0.103
+
+=== Rolling 12m start dates: carry (monthly) minus HODL ===
+count    62.0000
+mean      0.1745
+std       0.2102
+min       0.0281
+25%       0.0462
+50%       0.0581
+75%       0.3047
+max       0.8248
+share of windows where carry beat HODL: 1.0
+
+=== Stress: BTC crash needed to liquidate a static 40% LTV entered at the top ===
+BTC peak 2025-10-06 124658.54
+static from peak: max LTV 0.768 liqs [(datetime.date(2026, 2, 5), 62345)]
+static 50% from peak: max LTV 0.779, liquidations [(datetime.date(2026, 1, 30), 81118), (datetime.date(2026, 2, 5), 62345), (datetime.date(2026, 2, 6), 60000)], final 62,549
+static 60% from peak: max LTV 0.772, liquidations [(datetime.date(2025, 11, 14), 94012), (datetime.date(2025, 11, 21), 80600), (datetime.date(2026, 2, 4), 71888), (datetime.date(2026, 2, 6), 60000)], final 71,508
+
+=== Stress: HLP loses 20% in a single day (worst-case vault event) ===
+shock on 2025-05-20 final equity 236186 -> 219005 (-7.27%)

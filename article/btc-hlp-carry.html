@@ -1,0 +1,452 @@
+<title>Paid to HODL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@500;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column (~66ch) with charts and tables breaking slightly wider; research-note feel, ledger-style tables. */
+:root {
+  --bg: #f6f7f6;
+  --surface: #fcfcfb;
+  --ink: #12151a;
+  --ink-2: #4a4f57;
+  --muted: #858a90;
+  --rule: #dfe1de;
+  --axis: #c3c2b7;
+  --accent: #1f63b8;
+  --s1: #2a78d6;      /* carry, monthly / HLP */
+  --s2: #eb6834;      /* BTC buy & hold / borrow cost */
+  --s3: #1baf7a;      /* carry, static */
+  --critical: #d03b3b;
+  --good: #006300;
+  --bad: #b3261e;
+  --code-bg: #eceeec;
+  --display: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111316; --surface: #17191c; --ink: #f2f3f1; --ink-2: #c3c2b7; --muted: #8d9197;
+    --rule: #2c2e31; --axis: #3a3c3f; --accent: #6aa5ef;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; --critical: #e66767; --good: #0ca30c; --bad: #e66767;
+    --code-bg: #1f2226; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111316; --surface: #17191c; --ink: #f2f3f1; --ink-2: #c3c2b7; --muted: #8d9197;
+  --rule: #2c2e31; --axis: #3a3c3f; --accent: #6aa5ef;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70; --critical: #e66767; --good: #0ca30c; --bad: #e66767;
+  --code-bg: #1f2226; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 1.125rem; line-height: 1.65; }
+.page { padding-inline: 20px; padding-block: 56px 96px; }
+.col { max-width: 42rem; margin-inline: auto; }
+.wide { max-width: 50rem; margin-inline: auto; }
+header.top { display: grid; gap: 18px; margin-bottom: 40px; }
+.kicker { font-family: var(--mono); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font-family: var(--display); font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1.05; letter-spacing: -.02em; margin: 0; text-wrap: balance; }
+.dek { font-size: 1.3rem; line-height: 1.5; color: var(--ink-2); margin: 0; text-wrap: pretty; }
+.byline { font-family: var(--display); font-size: .92rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.byline b { color: var(--ink); font-weight: 700; }
+h2 { font-family: var(--display); font-weight: 700; font-size: 1.6rem; line-height: 1.2; letter-spacing: -.01em; margin: 56px 0 12px; text-wrap: balance; }
+h3 { font-family: var(--display); font-weight: 700; font-size: 1.12rem; margin: 32px 0 6px; }
+p { margin: 0 0 1.1em; text-wrap: pretty; }
+a { color: var(--accent); text-underline-offset: 3px; }
+strong { font-weight: 600; }
+code { font-family: var(--mono); font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+ol.steps { padding: 0; margin: 20px 0 28px; list-style: none; counter-reset: s; display: grid; gap: 14px; }
+ol.steps li { counter-increment: s; display: grid; grid-template-columns: 2.2rem 1fr; gap: 10px; }
+ol.steps li::before { content: counter(s); font-family: var(--mono); font-size: .85rem; color: var(--accent); border: 1px solid var(--rule); border-radius: 50%; width: 1.9rem; height: 1.9rem; display: grid; place-items: center; margin-top: 2px; }
+.tl { border-left: 2px solid var(--accent); padding: 4px 0 4px 18px; margin: 28px 0; font-size: 1.22rem; line-height: 1.5; color: var(--ink); }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr)); gap: 0; border-block: 1px solid var(--rule); margin: 8px 0 40px; }
+.stat { padding: 18px 16px 18px 0; display: grid; gap: 2px; }
+.stat + .stat { padding-left: 16px; border-left: 1px solid var(--rule); }
+.stat .v { font-family: var(--display); font-weight: 800; font-size: 1.9rem; letter-spacing: -.02em; line-height: 1.1; }
+.stat .l { font-family: var(--display); font-size: .82rem; color: var(--muted); line-height: 1.35; }
+@media (max-width: 560px) { .stat + .stat { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); } }
+
+/* figures */
+figure { margin: 32px 0 36px; }
+.fig-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 16px; margin-bottom: 10px; }
+.fig-title { font-family: var(--display); font-weight: 700; font-size: 1rem; color: var(--ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--display); font-size: .82rem; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 14px; height: 3px; border-radius: 2px; display: inline-block; }
+.legend i.dash { background: repeating-linear-gradient(90deg, var(--critical) 0 4px, transparent 4px 7px) !important; }
+.chart { position: relative; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 8px 6px 2px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.chart .dl { font-family: var(--display); font-size: 12px; font-weight: 700; fill: var(--ink); }
+figcaption { font-family: var(--display); font-size: .84rem; color: var(--muted); margin-top: 10px; line-height: 1.5; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); font-family: var(--display); font-size: .8rem; line-height: 1.45; padding: 8px 10px; border-radius: 6px; white-space: nowrap; transform: translate(-50%, calc(-100% - 12px)); }
+.tip b { font-weight: 700; }
+.tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+
+/* tables */
+.tbl { overflow-x: auto; margin: 20px 0 32px; }
+table { border-collapse: collapse; width: 100%; font-family: var(--display); font-size: .9rem; font-variant-numeric: tabular-nums; }
+th, td { text-align: right; padding: 9px 10px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; padding-left: 0; }
+thead th { font-weight: 500; font-size: .76rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--ink); }
+tr.hl td { font-weight: 700; }
+.sw-cell { display: inline-block; width: 10px; height: 3px; border-radius: 2px; margin-right: 8px; vertical-align: middle; }
+.neg { color: var(--bad); }
+.pos { color: var(--good); }
+.note { font-family: var(--display); font-size: .84rem; color: var(--muted); }
+
+.risks { display: grid; gap: 18px; margin: 18px 0 8px; }
+.risk h3 { margin: 0 0 4px; }
+.risk p { margin: 0; }
+.method { border-top: 1px solid var(--rule); margin-top: 64px; padding-top: 8px; font-size: 1rem; color: var(--ink-2); }
+.method h2 { font-size: 1.2rem; }
+.method ul { padding-left: 1.1em; margin: 0 0 1em; }
+.method li { margin-bottom: 6px; }
+.disclaimer { font-family: var(--display); font-size: .82rem; color: var(--muted); margin-top: 32px; }
+</style>
+
+<div class="page">
+<article>
+  <header class="top col">
+    <div class="kicker">Backtest · BTC · Hyperliquid</div>
+    <h1>Paid to HODL: borrowing against Bitcoin to farm HLP</h1>
+    <p class="dek">I hold Bitcoin for the long run, and most of the time it just sits there. So I tested a simple overlay: borrow 40% of its value in USDC and park it in Hyperliquid's HLP vault. Here is what 33 months of real data say.</p>
+    <div class="byline"><b>Achille Krotoff</b><span>October 2026</span><span>10 min read</span></div>
+  </header>
+
+  <div class="wide">
+    <div class="stats">
+      <div class="stat"><span class="v">+36.5%</span><span class="l">a year for BTC + HLP carry, vs +27.1% for plain BTC (Jan 2024 to Oct 2026)</span></div>
+      <div class="stat"><span class="v">$42.6k</span><span class="l">extra on a $100k starting portfolio</span></div>
+      <div class="stat"><span class="v">−0.01</span><span class="l">correlation between HLP returns and BTC returns</span></div>
+      <div class="stat"><span class="v">1</span><span class="l">liquidation, for a static position opened at the October 2025 top</span></div>
+    </div>
+  </div>
+
+  <div class="col">
+    <h2>The idea</h2>
+    <p>My Bitcoin thesis is long-term and fundamental: fixed supply, a growing base of institutional holders since the spot ETFs, and a monetary asset that keeps absorbing shocks. I am not trying to trade it. That also means the coins are idle capital. They earn nothing while I wait.</p>
+    <p>DeFi lets you borrow against BTC without selling it. The usual move is to borrow stablecoins and buy more BTC, which is just leverage. I wanted something different: keep my BTC exposure at exactly 1x and put the borrowed dollars into something that earns more than the loan costs, ideally something that does not move with Bitcoin.</p>
+    <p>HLP, the Hyperliquidity Provider vault, fits that description on paper. It is the community vault that makes markets and takes over liquidations on Hyperliquid, the largest onchain perpetuals exchange. Depositors earn its trading PnL in USDC. Its returns depend on order flow and volatility, and much less on the direction of the market.</p>
+
+    <h3>The setup</h3>
+    <ol class="steps">
+      <li><span>Buy BTC and deposit it as collateral on Aave v3.</span></li>
+      <li><span>Borrow USDC equal to 40% of the BTC value. Aave liquidates WBTC positions at 78% loan-to-value, so this leaves a wide buffer.</span></li>
+      <li><span>Deposit the USDC into HLP.</span></li>
+      <li><span>Once a month, rebalance: reset the loan to 40% of the BTC value, and move any HLP profit above the debt back into BTC (or sell a little BTC if HLP is short of the debt).</span></li>
+    </ol>
+    <p>Net exposure stays at one Bitcoin per Bitcoin of equity. Everything the overlay adds or loses comes from one number: the <strong>spread between HLP's return and the USDC borrow rate</strong>, applied to 40% of the portfolio.</p>
+  </div>
+
+  <div class="col">
+    <h2>The results</h2>
+    <p>I simulated $100,000 starting on 1 January 2024, day by day, using actual BTC prices, actual daily Aave v3 USDC borrow rates and HLP's own reported PnL. The main period starts in 2024 because HLP was small in 2023 (under $15M) and its early returns are too noisy to rely on. I included two comparisons: holding BTC alone, and taking the same $40k loan to buy more BTC (1.4x leverage).</p>
+  </div>
+
+  <div class="wide">
+    <figure>
+      <div class="fig-head">
+        <span class="fig-title">Portfolio value, $100k invested on 1 Jan 2024</span>
+        <span class="legend">
+          <span><i style="background:var(--s1)"></i>Carry, monthly rebalance</span>
+          <span><i style="background:var(--s3)"></i>Carry, static</span>
+          <span><i style="background:var(--s2)"></i>BTC buy &amp; hold</span>
+        </span>
+      </div>
+      <div class="chart" id="c-equity"></div>
+      <figcaption>Weekly closes. Carry uses a 40% loan-to-value; HLP gains, borrow interest and 10 bp trading costs included.</figcaption>
+    </figure>
+
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Strategy</th><th>Final value</th><th>CAGR</th><th>Volatility</th><th>Sharpe</th><th>Max drawdown</th><th>Liquidations</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sw-cell" style="background:var(--s2)"></span>BTC buy &amp; hold</td><td>$193.6k</td><td>27.1%</td><td>47.1%</td><td>0.64</td><td class="neg">−53.0%</td><td>0</td></tr>
+          <tr><td><span class="sw-cell" style="background:var(--s3)"></span>Carry, static 40%</td><td>$224.5k</td><td>34.1%</td><td>42.3%</td><td>0.78</td><td class="neg">−46.6%</td><td>0</td></tr>
+          <tr class="hl"><td><span class="sw-cell" style="background:var(--s1)"></span>Carry, monthly 40%</td><td>$236.2k</td><td>36.5%</td><td>46.9%</td><td>0.79</td><td class="neg">−51.2%</td><td>0</td></tr>
+          <tr><td><span class="sw-cell" style="background:var(--muted)"></span>1.4x BTC (loan buys BTC)</td><td>$198.5k</td><td>28.2%</td><td>66.2%</td><td>0.63</td><td class="neg">−67.2%</td><td>0</td></tr>
+        </tbody>
+      </table>
+      <p class="note">1 Jan 2024 to 6 Oct 2026. Sharpe uses the Aave USDC supply rate as the risk-free rate.</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>The carry overlay added about 9 points a year over plain BTC, and the drawdown was no worse. The comparison with 1.4x BTC is the one I find most telling. The same $40k loan, pointed at more Bitcoin, finished only $5k ahead of buy-and-hold while the worst drawdown deepened to −67%. Pointed at HLP, it finished $43k ahead. When BTC fell 53% from its October 2025 high, the HLP sleeve kept earning, so the loan never compounded the pain.</p>
+    <p>The full sample from June 2023 looks even better (57.7% a year vs 41.4%), but that comes from HLP's tiny early days, and I would not plan on seeing it again.</p>
+
+    <h2>Where the return comes from</h2>
+    <p>On the monthly version, HLP earned $51.3k over the period and the loan cost $14.9k in interest. That $36k net carry, reinvested into BTC along the way, explains the whole gap with buy-and-hold. The chart below shows the two sides of the trade per dollar.</p>
+  </div>
+
+  <div class="wide">
+    <figure>
+      <div class="fig-head">
+        <span class="fig-title">What $1 in HLP earned vs what $1 of debt cost</span>
+        <span class="legend">
+          <span><i style="background:var(--s1)"></i>HLP cumulative return</span>
+          <span><i style="background:var(--s2)"></i>Aave USDC borrow cost</span>
+        </span>
+      </div>
+      <div class="chart" id="c-index"></div>
+      <figcaption>Cumulative, from 1 Jan 2024. HLP: +99%. Borrowing: +20%.</figcaption>
+    </figure>
+  </div>
+
+  <div class="col">
+    <p>Two things stand out. First, the debt is a smooth, predictable cost. HLP's return comes in steps. Second, the biggest steps line up with Bitcoin's worst days. HLP's best two-week windows since 2024 include the October 2025 flash crash (+8.8% while BTC traded 14% lower intraperiod) and the February 2026 drop to $60k (+6.7% while BTC lost 18%). Liquidation cascades are when HLP earns the most, because it takes over liquidated positions and provides liquidity when everyone else steps back.</p>
+    <p>Measured over all 2024 to 2026 snapshots, the correlation between HLP returns and BTC returns is −0.01. Against BTC's worst intraperiod move it is −0.17: when BTC crashes harder, HLP tends to earn a little more. For someone who already owns BTC, that is the property that matters most.</p>
+
+    <div class="tl">Over the last 12 months, HLP returned 13%. Strip out the two crash windows and it returned 0.4%, against a 4.6% cost of borrowing.</div>
+
+    <h2>The spread is shrinking</h2>
+    <p>The yearly picture explains why the carry looks so strong in the headline numbers.</p>
+  </div>
+
+  <div class="wide">
+    <figure>
+      <div class="fig-head">
+        <span class="fig-title">HLP return vs USDC borrow cost, by calendar year</span>
+        <span class="legend">
+          <span><i style="background:var(--s1)"></i>HLP return</span>
+          <span><i style="background:var(--s2)"></i>Borrow cost</span>
+        </span>
+      </div>
+      <div class="chart" id="c-yearly"></div>
+      <figcaption>2026 runs to 6 October (279 days); borrow cost is pro-rated to match.</figcaption>
+    </figure>
+  </div>
+
+  <div class="col">
+    <p>2024 was exceptional: HLP returned 58% while the vault grew from $11M to $400M. In 2025 the spread fell to about 11 points. In 2026 it is about 4 points year to date, and nearly all of it came in a single two-week window in early February. Since mid-February, HLP's PnL has been flat while the loan kept costing around 4.4% a year. For close to eight months, the overlay has been losing money.</p>
+    <p>This is what you would expect. HLP is now a $180M to $600M vault competing with professional market makers on a much bigger exchange. More capital chasing the same order flow means a lower yield per dollar. I would treat 2024 as a one-off and size the strategy around the recent years.</p>
+
+    <h2>The risk that matters: liquidation</h2>
+    <p>The monthly rebalance is what kept this strategy safe. When BTC falls, the loan-to-value rises; at month end the strategy pulls USDC from HLP to repay part of the loan and brings it back to 40%. Across the whole period, the monthly version never went above 52% LTV.</p>
+    <p>The static version tells a different story when it starts at the wrong time. Here is a 40% LTV position opened at the BTC high of $124,659 on 6 October 2025 and never touched.</p>
+  </div>
+
+  <div class="wide">
+    <figure>
+      <div class="fig-head">
+        <span class="fig-title">Static 40% LTV opened at the October 2025 top</span>
+        <span class="legend">
+          <span><i style="background:var(--s1)"></i>Loan-to-value on the daily low</span>
+          <span><i class="dash"></i>Aave liquidation threshold, 78%</span>
+        </span>
+      </div>
+      <div class="chart" id="c-ltv"></div>
+      <figcaption>Liquidated on 5 February 2026, when BTC touched $62,345, a 50% fall from entry. Accrued interest pushed the threshold slightly closer than the 49% you would compute on day one.</figcaption>
+    </figure>
+  </div>
+
+  <div class="col">
+    <p>A 40% LTV survives a 49% fall in BTC. Bitcoin has fallen more than that in every previous cycle, and in this one it fell exactly that much. The rebalanced version survives because the loan shrinks along with the BTC position: after a fall, part of the HLP balance repays part of the loan and LTV goes back to 40%. The weak spot is timing. Between two rebalances, a fast crash can still push LTV up, which is why I would add a trigger on top of the monthly schedule.</p>
+
+    <h3>How much to borrow</h3>
+    <p>I ran the monthly version at different loan sizes over the same period.</p>
+  </div>
+
+  <div class="wide">
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Loan-to-value</th><th>CAGR</th><th>Sharpe</th><th>Max drawdown</th><th>Peak LTV</th><th>Liquidations</th><th>BTC drop to liquidate</th></tr></thead>
+        <tbody>
+          <tr><td>0% (BTC only)</td><td>27.1%</td><td>0.64</td><td class="neg">−53.0%</td><td>0%</td><td>0</td><td>never</td></tr>
+          <tr><td>20%</td><td>31.7%</td><td>0.71</td><td class="neg">−52.1%</td><td>26%</td><td>0</td><td>74%</td></tr>
+          <tr><td>30%</td><td>34.1%</td><td>0.75</td><td class="neg">−51.6%</td><td>39%</td><td>0</td><td>62%</td></tr>
+          <tr class="hl"><td>40%</td><td>36.5%</td><td>0.79</td><td class="neg">−51.2%</td><td>52%</td><td>0</td><td>49%</td></tr>
+          <tr><td>50%</td><td>39.0%</td><td>0.83</td><td class="neg">−50.7%</td><td>65%</td><td>0</td><td>36%</td></tr>
+          <tr><td>60%</td><td>28.4%</td><td>0.66</td><td class="neg">−56.3%</td><td>76%</td><td class="neg">4</td><td>23%</td></tr>
+          <tr><td>70%</td><td>17.1%</td><td>0.46</td><td class="neg">−57.9%</td><td>82%</td><td class="neg">16</td><td>10%</td></tr>
+        </tbody>
+      </table>
+      <p class="note">Monthly rebalance, 1 Jan 2024 to 6 Oct 2026. "BTC drop to liquidate" is measured from each rebalance.</p>
+    </div>
+  </div>
+
+  <div class="col">
+    <p>Returns rise steadily up to 50%, then fall apart. At 60%, a normal one-month BTC move is enough to trigger liquidations, and each one costs a 5% liquidation penalty. 50% was the best number in this sample, but a 36% monthly drop is not an exotic event for Bitcoin. I would stay between 30% and 40%.</p>
+
+    <h3>Did the start date matter?</h3>
+    <p>I re-ran the monthly strategy over every 12-month window starting every two weeks from June 2023 (62 windows). The carry version beat plain BTC in all 62. The median outperformance was 5.8 points and the worst was 2.8 points. The best, 82 points, came from a window starting in 2023, when HLP was still small. Since HLP's gains arrive in bursts, the result depends on staying in the trade long enough to catch them.</p>
+
+    <h2>What the backtest does not capture</h2>
+    <div class="risks">
+      <div class="risk"><h3>An HLP blow-up</h3><p>HLP has taken real hits: a $4M loss in March 2025 when a whale used leverage to exit a large ETH position, and the JELLY squeeze later that month, which validators ended by delisting the market. Neither showed up as a large loss in the data. A truly bad event could. Forcing a 20% one-day HLP loss into the monthly simulation cut final equity by 7.3%, which hurts but is survivable. A total loss of the HLP sleeve would mean losing 40% of starting equity in dollars while the BTC loan is still owed.</p></div>
+      <div class="risk"><h3>The 4-day lockup</h3><p>HLP deposits are locked for four days after each deposit. In a crash you cannot pull USDC out of HLP the same day to repay the loan. Keep a separate USDC or BTC buffer for emergencies.</p></div>
+      <div class="risk"><h3>Borrow rate spikes</h3><p>Aave's USDC borrow rate has a median of 5.3% since 2023 but hit 28% on a daily average. Spikes are short and tend to come in euphoric markets, but a few days at those rates can wipe out weeks of spread.</p></div>
+      <div class="risk"><h3>Plumbing</h3><p>The test borrows on Aave (Ethereum) and deposits on Hyperliquid. In practice that means a bridge, smart contract risk on both sides, and Hyperliquid's own validator set. HyperEVM lending markets avoid the bridge but have shorter rate histories.</p></div>
+      <div class="risk"><h3>Data granularity and hindsight</h3><p>Hyperliquid only publishes about 100 snapshots of HLP's history (every 7 to 14 days), so short drawdowns between snapshots are smoothed out. I picked HLP knowing it survived. Taxes, gas and bridge fees are ignored.</p></div>
+    </div>
+
+    <h2>How I would run it</h2>
+    <p>The backtest supports the core idea: an uncorrelated USDC yield, funded by a moderate loan against BTC, improved returns without making the drawdown worse. It also says the easy part of the trade is over. Here is the version I would actually run:</p>
+    <ol class="steps">
+      <li><span><strong>Borrow 30 to 40%</strong>, never more. The extra return from 50% is not worth losing the buffer.</span></li>
+      <li><span><strong>Rebalance monthly, and also on a trigger:</strong> if LTV goes above 55%, repay immediately from a reserve kept outside HLP.</span></li>
+      <li><span><strong>Judge the spread over 6 to 12 months.</strong> A three-month filter (exit when HLP trails the borrow rate) would have closed the trade in mid-January 2026, about three weeks before the February window that paid for most of this year's carry.</span></li>
+      <li><span><strong>Size for HLP going to zero.</strong> If losing the HLP sleeve would force me to sell BTC at the bottom, the loan is too big.</span></li>
+    </ol>
+    <p>The way I think about it now: HLP behaves like insurance for BTC holders. It pays out in chaos and earns little in calm markets. Holding it with borrowed money is a bet that crashes keep happening and that Hyperliquid keeps getting paid for them. So far that bet has paid. The open question is how much it will pay as more capital crowds into the vault.</p>
+  </div>
+
+  <section class="method col">
+    <h2>Methodology</h2>
+    <ul>
+      <li><strong>BTC:</strong> Binance BTC/USDT daily closes, with daily lows used for liquidation checks.</li>
+      <li><strong>Borrow rate:</strong> Aave v3 Ethereum USDC variable borrow rate, daily average of <code>ReserveDataUpdated</code> events (<a href="https://dune.com/queries/8907946">Dune query</a>). Interest accrues daily on the outstanding loan.</li>
+      <li><strong>HLP:</strong> Hyperliquid <code>vaultDetails</code> API for vault <code>0xdfc2…f303</code>. Each snapshot interval's return is computed with the Modified Dietz method, so deposits and withdrawals do not show up as performance, then spread evenly over the days of the interval.</li>
+      <li><strong>Liquidation:</strong> 78% threshold, 50% of the debt closed per event, 5% penalty on seized BTC. HLP is not counted as collateral.</li>
+      <li><strong>Costs:</strong> 10 bp on every BTC trade. No gas, bridge fees or taxes.</li>
+      <li><strong>Period:</strong> 1 January 2024 to 6 October 2026 for headline figures; June 2023 onward for the full-history and rolling-window checks.</li>
+    </ul>
+    <p class="disclaimer">This is a personal research note and not investment advice. Borrowing against crypto can lose more than the borrowed amount, and past HLP returns say little about future ones.</p>
+  </section>
+</article>
+</div>
+
+<script>
+const DATA = {"equity": [{"d": "2024-01-07", "hodl": 99333.4948, "carry": 101270.3108, "static": 101270.3108}, {"d": "2024-01-14", "hodl": 94366.3248, "carry": 98036.5942, "static": 98036.5942}, {"d": "2024-01-21", "hodl": 94022.573, "carry": 98581.6567, "static": 98581.6567}, {"d": "2024-01-28", "hodl": 95041.776, "carry": 100028.9376, "static": 100028.9376}, {"d": "2024-02-04", "hodl": 96289.5664, "carry": 101543.4626, "static": 101569.0838}, {"d": "2024-02-11", "hodl": 109217.251, "carry": 115272.6784, "static": 114634.9668}, {"d": "2024-02-18", "hodl": 117895.1174, "carry": 124799.8393, "static": 123757.9015}, {"d": "2024-02-25", "hodl": 116970.6825, "carry": 124590.1941, "static": 123696.8024}, {"d": "2024-03-03", "hodl": 142715.0255, "carry": 152711.6659, "static": 150371.0837}, {"d": "2024-03-10", "hodl": 155924.9112, "carry": 168117.4428, "static": 164664.3842}, {"d": "2024-03-17", "hodl": 154653.1971, "carry": 168184.0352, "static": 164570.7866}, {"d": "2024-03-24", "hodl": 151977.0573, "carry": 166252.1679, "static": 162657.9422}, {"d": "2024-03-31", "hodl": 161180.2972, "carry": 176493.1788, "static": 172229.6373}, {"d": "2024-04-07", "hodl": 156839.6002, "carry": 172129.6182, "static": 168195.2069}, {"d": "2024-04-14", "hodl": 148476.3384, "carry": 163212.8851, "static": 160034.4153}, {"d": "2024-04-21", "hodl": 146846.6946, "carry": 161796.6906, "static": 158698.3614}, {"d": "2024-04-28", "hodl": 142725.5402, "carry": 157741.7184, "static": 154936.0863}, {"d": "2024-05-05", "hodl": 144745.6753, "carry": 160266.658, "static": 157160.6812}, {"d": "2024-05-12", "hodl": 139029.2704, "carry": 154037.7388, "static": 151548.113}, {"d": "2024-05-19", "hodl": 149860.5938, "carry": 166328.4063, "static": 162667.6223}, {"d": "2024-05-26", "hodl": 154911.4066, "carry": 172370.3697, "static": 168139.7869}, {"d": "2024-06-02", "hodl": 153233.4856, "carry": 170809.109, "static": 166740.8272}, {"d": "2024-06-09", "hodl": 157490.2684, "carry": 175740.6476, "static": 171176.0822}, {"d": "2024-06-16", "hodl": 150771.5518, "carry": 168426.2623, "static": 164621.034}, {"d": "2024-06-23", "hodl": 142932.1937, "carry": 159850.1907, "static": 156933.5623}, {"d": "2024-06-30", "hodl": 141941.7762, "carry": 158917.9045, "static": 156104.9909}, {"d": "2024-07-07", "hodl": 126307.1991, "carry": 141581.3493, "static": 140641.5015}, {"d": "2024-07-14", "hodl": 137477.8876, "carry": 154327.6251, "static": 152044.4674}, {"d": "2024-07-21", "hodl": 154137.3207, "carry": 173261.0698, "static": 168974.5426}, {"d": "2024-07-28", "hodl": 154328.4848, "carry": 173855.8703, "static": 169521.9373}, {"d": "2024-08-04", "hodl": 131515.235, "carry": 148649.7802, "static": 147133.769}, {"d": "2024-08-11", "hodl": 132762.5053, "carry": 150292.8146, "static": 148603.338}, {"d": "2024-08-18", "hodl": 132117.5129, "carry": 149619.4205, "static": 148021.8375}, {"d": "2024-08-25", "hodl": 145216.0106, "carry": 164451.417, "static": 161184.1003}, {"d": "2024-09-01", "hodl": 129572.5243, "carry": 146836.707, "static": 145606.0856}, {"d": "2024-09-08", "hodl": 124073.4232, "carry": 140636.3401, "static": 140153.981}, {"d": "2024-09-15", "hodl": 133710.8866, "carry": 151577.9862, "static": 149826.765}, {"d": "2024-09-22", "hodl": 143766.0212, "carry": 163152.6097, "static": 160071.8726}, {"d": "2024-09-29", "hodl": 148341.0492, "carry": 168634.7403, "static": 164951.6862}, {"d": "2024-10-06", "hodl": 142050.089, "carry": 161645.6869, "static": 158814.1743}, {"d": "2024-10-13", "hodl": 142163.3991, "carry": 161805.3001, "static": 158973.5395}, {"d": "2024-10-20", "hodl": 156097.0132, "carry": 177621.7266, "static": 172900.6854}, {"d": "2024-10-27", "hodl": 153812.518, "carry": 174940.2939, "static": 170564.0153}, {"d": "2024-11-03", "hodl": 155518.1391, "carry": 177021.9064, "static": 172411.7221}, {"d": "2024-11-10", "hodl": 181734.8524, "carry": 207164.5075, "static": 198920.5973}, {"d": "2024-11-17", "hodl": 203184.8084, "carry": 231742.3389, "static": 220547.6896}, {"d": "2024-11-24", "hodl": 221374.233, "carry": 252493.523, "static": 238821.3557}, {"d": "2024-12-01", "hodl": 219757.7721, "carry": 251007.1854, "static": 237507.6128}, {"d": "2024-12-08", "hodl": 228631.7548, "carry": 261782.7437, "static": 246831.929}, {"d": "2024-12-15", "hodl": 236216.8153, "carry": 271181.1718, "static": 254920.4602}, {"d": "2024-12-22", "hodl": 215237.7825, "carry": 247497.2034, "static": 234151.8289}, {"d": "2024-12-29", "hodl": 211963.3672, "carry": 243634.4481, "static": 230843.8002}, {"d": "2025-01-05", "hodl": 222422.4701, "carry": 255525.9651, "static": 241263.9417}, {"d": "2025-01-12", "hodl": 213787.861, "carry": 245480.4864, "static": 232591.6902}, {"d": "2025-01-19", "hodl": 229133.702, "carry": 263432.5975, "static": 248180.7135}, {"d": "2025-01-26", "hodl": 232047.1349, "carry": 267431.0729, "static": 251551.4921}, {"d": "2025-02-02", "hodl": 220923.2312, "carry": 254908.246, "static": 240662.0977}, {"d": "2025-02-09", "hodl": 218124.1938, "carry": 251680.8466, "static": 237895.5639}, {"d": "2025-02-16", "hodl": 217344.907, "carry": 250763.1975, "static": 237131.9716}, {"d": "2025-02-23", "hodl": 217661.2075, "carry": 251269.8143, "static": 237559.3152}, {"d": "2025-03-02", "hodl": 213165.8878, "carry": 246371.4625, "static": 233248.0391}, {"d": "2025-03-09", "hodl": 182558.7532, "carry": 210582.6669, "static": 202355.1794}, {"d": "2025-03-16", "hodl": 186719.773, "carry": 215069.3583, "static": 206301.817}, {"d": "2025-03-23", "hodl": 194652.0902, "carry": 224351.625, "static": 214338.0249}, {"d": "2025-03-30", "hodl": 186302.4861, "carry": 214723.3241, "static": 206021.2862}, {"d": "2025-04-06", "hodl": 177348.049, "carry": 204357.2421, "static": 197049.2958}, {"d": "2025-04-13", "hodl": 189400.39, "carry": 218293.7184, "static": 209153.0735}, {"d": "2025-04-20", "hodl": 192609.6141, "carry": 222109.8728, "static": 212466.788}, {"d": "2025-04-27", "hodl": 211988.4668, "carry": 244540.8107, "static": 231933.6729}, {"d": "2025-05-04", "hodl": 213183.1184, "carry": 245995.0227, "static": 233199.4674}, {"d": "2025-05-11", "hodl": 235434.4533, "carry": 271892.8281, "static": 255617.9281}, {"d": "2025-05-18", "hodl": 240717.2679, "carry": 278214.0889, "static": 261068.9952}, {"d": "2025-05-25", "hodl": 246483.239, "carry": 285011.9199, "static": 266950.3999}, {"d": "2025-06-01", "hodl": 238882.6665, "carry": 276368.5725, "static": 259446.6513}, {"d": "2025-06-08", "hodl": 239088.5964, "carry": 276707.9025, "static": 259733.8097}, {"d": "2025-06-15", "hodl": 238772.0472, "carry": 276397.6498, "static": 259473.1139}, {"d": "2025-06-22", "hodl": 228302.2487, "carry": 264330.7395, "static": 249049.6069}, {"d": "2025-06-29", "hodl": 245019.6371, "carry": 283693.1066, "static": 265800.3705}, {"d": "2025-07-06", "hodl": 246934.693, "carry": 285919.0626, "static": 267739.2686}, {"d": "2025-07-13", "hodl": 269281.9491, "carry": 311898.507, "static": 290167.7675}, {"d": "2025-07-20", "hodl": 265163.0786, "carry": 307306.2946, "static": 286172.6397}, {"d": "2025-07-27", "hodl": 270025.6894, "carry": 313107.5559, "static": 291155.8047}, {"d": "2025-08-03", "hodl": 258252.0447, "carry": 299635.807, "static": 279499.0782}, {"d": "2025-08-10", "hodl": 269750.8598, "carry": 313159.1296, "static": 291120.4594}, {"d": "2025-08-17", "hodl": 265479.4016, "carry": 308387.4298, "static": 286972.1471}, {"d": "2025-08-24", "hodl": 256634.7924, "carry": 298229.2918, "static": 278207.6565}, {"d": "2025-08-31", "hodl": 244769.5906, "carry": 284519.2477, "static": 266395.4123}, {"d": "2025-09-07", "hodl": 251306.7758, "carry": 292149.2626, "static": 272974.8876}, {"d": "2025-09-14", "hodl": 260647.1591, "carry": 303018.0269, "static": 282347.0861}, {"d": "2025-09-21", "hodl": 260566.3881, "carry": 303039.8611, "static": 282360.4027}, {"d": "2025-09-28", "hodl": 253628.1742, "carry": 295180.4915, "static": 275567.8}, {"d": "2025-10-05", "hodl": 279221.5577, "carry": 327902.2449, "static": 302843.2716}, {"d": "2025-10-12", "hodl": 259947.9651, "carry": 310611.7706, "static": 286496.6264}, {"d": "2025-10-19", "hodl": 245666.0089, "carry": 296232.3455, "static": 273504.4495}, {"d": "2025-10-26", "hodl": 259044.8309, "carry": 311753.3148, "static": 286876.1492}, {"d": "2025-11-02", "hodl": 249957.592, "carry": 300862.7139, "static": 277584.3386}, {"d": "2025-11-09", "hodl": 236802.4053, "carry": 284382.4915, "static": 264068.5624}, {"d": "2025-11-16", "hodl": 213146.5317, "carry": 255565.9309, "static": 240241.2862}, {"d": "2025-11-23", "hodl": 196342.3575, "carry": 235229.702, "static": 223405.6682}, {"d": "2025-11-30", "hodl": 204324.4895, "carry": 244761.8466, "static": 231364.9637}, {"d": "2025-12-07", "hodl": 204404.3334, "carry": 244801.5474, "static": 231427.4624}, {"d": "2025-12-14", "hodl": 199377.3088, "carry": 238704.0462, "static": 226368.6879}, {"d": "2025-12-21", "hodl": 200477.8255, "carry": 239934.3923, "static": 227427.7602}, {"d": "2025-12-28", "hodl": 198881.0599, "carry": 237939.762, "static": 225793.3909}, {"d": "2026-01-04", "hodl": 206969.5148, "carry": 247532.7424, "static": 233844.5264}, {"d": "2026-01-11", "hodl": 205802.5407, "carry": 246143.9199, "static": 232706.608}, {"d": "2026-01-18", "hodl": 211816.2518, "carry": 253407.4976, "static": 238798.012}, {"d": "2026-01-25", "hodl": 195981.3752, "carry": 236212.7018, "static": 224337.4773}, {"d": "2026-02-01", "hodl": 174042.6097, "carry": 212887.5529, "static": 204804.3031}, {"d": "2026-02-08", "hodl": 159032.968, "carry": 195720.8873, "static": 190845.8659}, {"d": "2026-02-15", "hodl": 155646.1019, "carry": 191551.7654, "static": 187450.8241}, {"d": "2026-02-22", "hodl": 152957.0958, "carry": 188223.3406, "static": 184743.4335}, {"d": "2026-03-01", "hodl": 148735.5429, "carry": 182992.2684, "static": 180497.3919}, {"d": "2026-03-08", "hodl": 149175.8716, "carry": 183505.2355, "static": 180927.5647}, {"d": "2026-03-15", "hodl": 164651.801, "carry": 202531.9966, "static": 196406.2717}, {"d": "2026-03-22", "hodl": 153444.6163, "carry": 188715.6749, "static": 185189.1395}, {"d": "2026-03-29", "hodl": 149265.7102, "carry": 183537.034, "static": 180990.917}, {"d": "2026-04-05", "hodl": 156101.9653, "carry": 191783.5298, "static": 187679.687}, {"d": "2026-04-12", "hodl": 159961.4279, "carry": 196276.4006, "static": 191298.737}, {"d": "2026-04-19", "hodl": 166882.6147, "carry": 204634.8877, "static": 198091.9187}, {"d": "2026-04-26", "hodl": 177862.5913, "carry": 217981.6369, "static": 208979.9561}, {"d": "2026-05-03", "hodl": 177661.3873, "carry": 217640.0354, "static": 208738.0623}, {"d": "2026-05-10", "hodl": 185895.6461, "carry": 227657.9138, "static": 216933.6785}, {"d": "2026-05-17", "hodl": 175149.39, "carry": 214436.8563, "static": 206163.3735}, {"d": "2026-05-24", "hodl": 174261.3835, "carry": 213297.1177, "static": 205257.2688}, {"d": "2026-05-31", "hodl": 166594.5344, "carry": 203855.1855, "static": 197572.4527}, {"d": "2026-06-07", "hodl": 143208.0634, "carry": 175193.7334, "static": 174167.7688}, {"d": "2026-06-14", "hodl": 148667.6608, "carry": 181814.8684, "static": 179594.3748}, {"d": "2026-06-21", "hodl": 143162.7937, "carry": 175008.0021, "static": 174045.5434}, {"d": "2026-06-28", "hodl": 134717.1553, "carry": 164598.4151, "static": 165552.7517}, {"d": "2026-07-05", "hodl": 143927.1111, "carry": 175771.041, "static": 174708.1502}, {"d": "2026-07-12", "hodl": 144221.0706, "carry": 176075.8731, "static": 174960.865}, {"d": "2026-07-19", "hodl": 146352.3677, "carry": 178628.3675, "static": 177055.2715}, {"d": "2026-07-26", "hodl": 147884.2361, "carry": 180454.1339, "static": 178556.8575}, {"d": "2026-08-02", "hodl": 143746.2129, "carry": 175353.2423, "static": 174392.8359}, {"d": "2026-08-09", "hodl": 146757.2404, "carry": 178996.2292, "static": 177394.8885}, {"d": "2026-08-16", "hodl": 142231.1907, "carry": 173456.9788, "static": 172873.7972}, {"d": "2026-08-23", "hodl": 175774.2349, "carry": 214416.3925, "static": 206485.1373}, {"d": "2026-08-30", "hodl": 175656.6511, "carry": 214352.8647, "static": 206483.6927}, {"d": "2026-09-06", "hodl": 181671.131, "carry": 221723.5521, "static": 212555.3688}, {"d": "2026-09-13", "hodl": 173757.2429, "carry": 212048.6379, "static": 204652.6657}, {"d": "2026-09-20", "hodl": 183561.9014, "carry": 224003.1993, "static": 214474.8682}, {"d": "2026-09-27", "hodl": 191010.3838, "carry": 233083.2798, "static": 221942.507}, {"d": "2026-10-04", "hodl": 195663.9893, "carry": 238745.0951, "static": 226609.8961}, {"d": "2026-10-11", "hodl": 193573.824, "carry": 236186.385, "static": 224521.7976}], "index": [{"d": "2024-01-07", "hlp": 1.0587, "borrow": 1.0019, "btc": 43929.02}, {"d": "2024-01-14", "hlp": 1.1041, "borrow": 1.0036, "btc": 41732.35}, {"d": "2024-01-21", "hlp": 1.1283, "borrow": 1.0053, "btc": 41580.33}, {"d": "2024-01-28", "hlp": 1.1403, "borrow": 1.0065, "btc": 42031.06}, {"d": "2024-02-04", "hlp": 1.1489, "borrow": 1.0077, "btc": 42582.88}, {"d": "2024-02-11", "hlp": 1.1541, "borrow": 1.0094, "btc": 48299.99}, {"d": "2024-02-18", "hlp": 1.1673, "borrow": 1.0114, "btc": 52137.67}, {"d": "2024-02-25", "hlp": 1.191, "borrow": 1.0133, "btc": 51728.85}, {"d": "2024-03-03", "hlp": 1.2167, "borrow": 1.0156, "btc": 63113.97}, {"d": "2024-03-10", "hlp": 1.2466, "borrow": 1.018, "btc": 68955.88}, {"d": "2024-03-17", "hlp": 1.2798, "borrow": 1.0215, "btc": 68393.48}, {"d": "2024-03-24", "hlp": 1.3013, "borrow": 1.0237, "btc": 67209.99}, {"d": "2024-03-31", "hlp": 1.3136, "borrow": 1.0267, "btc": 71280.01}, {"d": "2024-04-07", "hlp": 1.3231, "borrow": 1.0284, "btc": 69360.39}, {"d": "2024-04-14", "hlp": 1.3305, "borrow": 1.0307, "btc": 65661.84}, {"d": "2024-04-21", "hlp": 1.34, "borrow": 1.0328, "btc": 64941.15}, {"d": "2024-04-28", "hlp": 1.351, "borrow": 1.0348, "btc": 63118.62}, {"d": "2024-05-05", "hlp": 1.3582, "borrow": 1.0367, "btc": 64012.0}, {"d": "2024-05-12", "hlp": 1.3623, "borrow": 1.0383, "btc": 61483.99}, {"d": "2024-05-19", "hlp": 1.3712, "borrow": 1.0398, "btc": 66274.01}, {"d": "2024-05-26", "hlp": 1.3836, "borrow": 1.0416, "btc": 68507.67}, {"d": "2024-06-02", "hlp": 1.3927, "borrow": 1.0436, "btc": 67765.63}, {"d": "2024-06-09", "hlp": 1.3992, "borrow": 1.0457, "btc": 69648.14}, {"d": "2024-06-16", "hlp": 1.4052, "borrow": 1.0475, "btc": 66676.87}, {"d": "2024-06-23", "hlp": 1.4108, "borrow": 1.0493, "btc": 63210.01}, {"d": "2024-06-30", "hlp": 1.4167, "borrow": 1.051, "btc": 62772.01}, {"d": "2024-07-07", "hlp": 1.4227, "borrow": 1.0527, "btc": 55857.81}, {"d": "2024-07-14", "hlp": 1.4301, "borrow": 1.0543, "btc": 60797.91}, {"d": "2024-07-21", "hlp": 1.4386, "borrow": 1.0559, "btc": 68165.34}, {"d": "2024-07-28", "hlp": 1.449, "borrow": 1.0574, "btc": 68249.88}, {"d": "2024-08-04", "hlp": 1.4611, "borrow": 1.0587, "btc": 58161.0}, {"d": "2024-08-11", "hlp": 1.4678, "borrow": 1.0598, "btc": 58712.59}, {"d": "2024-08-18", "hlp": 1.4705, "borrow": 1.0609, "btc": 58427.35}, {"d": "2024-08-25", "hlp": 1.4733, "borrow": 1.062, "btc": 64220.0}, {"d": "2024-09-01", "hlp": 1.4761, "borrow": 1.0632, "btc": 57301.86}, {"d": "2024-09-08", "hlp": 1.4785, "borrow": 1.0643, "btc": 54869.95}, {"d": "2024-09-15", "hlp": 1.4804, "borrow": 1.0654, "btc": 59132.0}, {"d": "2024-09-22", "hlp": 1.4862, "borrow": 1.0664, "btc": 63578.76}, {"d": "2024-09-29", "hlp": 1.495, "borrow": 1.0675, "btc": 65602.01}, {"d": "2024-10-06", "hlp": 1.5001, "borrow": 1.0687, "btc": 62819.91}, {"d": "2024-10-13", "hlp": 1.5024, "borrow": 1.0699, "btc": 62870.02}, {"d": "2024-10-20", "hlp": 1.5036, "borrow": 1.0712, "btc": 69031.99}, {"d": "2024-10-27", "hlp": 1.5038, "borrow": 1.0727, "btc": 68021.7}, {"d": "2024-11-03", "hlp": 1.509, "borrow": 1.0743, "btc": 68775.99}, {"d": "2024-11-10", "hlp": 1.5179, "borrow": 1.0758, "btc": 80370.01}, {"d": "2024-11-17", "hlp": 1.5241, "borrow": 1.0776, "btc": 89855.99}, {"d": "2024-11-24", "hlp": 1.5283, "borrow": 1.0796, "btc": 97900.04}, {"d": "2024-12-01", "hlp": 1.5385, "borrow": 1.0822, "btc": 97185.18}, {"d": "2024-12-08", "hlp": 1.5534, "borrow": 1.0856, "btc": 101109.59}, {"d": "2024-12-15", "hlp": 1.5693, "borrow": 1.0888, "btc": 104463.99}, {"d": "2024-12-22", "hlp": 1.5774, "borrow": 1.0916, "btc": 95186.27}, {"d": "2024-12-29", "hlp": 1.5792, "borrow": 1.0942, "btc": 93738.2}, {"d": "2025-01-05", "hlp": 1.5808, "borrow": 1.0968, "btc": 98363.61}, {"d": "2025-01-12", "hlp": 1.5822, "borrow": 1.0991, "btc": 94545.06}, {"d": "2025-01-19", "hlp": 1.5907, "borrow": 1.1014, "btc": 101331.57}, {"d": "2025-01-26", "hlp": 1.6045, "borrow": 1.1037, "btc": 102620.0}, {"d": "2025-02-02", "hlp": 1.6125, "borrow": 1.1057, "btc": 97700.59}, {"d": "2025-02-09", "hlp": 1.615, "borrow": 1.1075, "btc": 96462.75}, {"d": "2025-02-16", "hlp": 1.6169, "borrow": 1.109, "btc": 96118.12}, {"d": "2025-02-23", "hlp": 1.6212, "borrow": 1.1104, "btc": 96258.0}, {"d": "2025-03-02", "hlp": 1.6273, "borrow": 1.1119, "btc": 94270.0}, {"d": "2025-03-09", "hlp": 1.6214, "borrow": 1.1132, "btc": 80734.37}, {"d": "2025-03-16", "hlp": 1.6172, "borrow": 1.1143, "btc": 82574.53}, {"d": "2025-03-23", "hlp": 1.6208, "borrow": 1.1154, "btc": 86082.5}, {"d": "2025-03-30", "hlp": 1.6227, "borrow": 1.1164, "btc": 82389.99}, {"d": "2025-04-06", "hlp": 1.6232, "borrow": 1.1174, "btc": 78430.0}, {"d": "2025-04-13", "hlp": 1.6255, "borrow": 1.1183, "btc": 83760.0}, {"d": "2025-04-20", "hlp": 1.6291, "borrow": 1.1193, "btc": 85179.24}, {"d": "2025-04-27", "hlp": 1.6322, "borrow": 1.1202, "btc": 93749.3}, {"d": "2025-05-04", "hlp": 1.635, "borrow": 1.1212, "btc": 94277.62}, {"d": "2025-05-11", "hlp": 1.6402, "borrow": 1.1222, "btc": 104118.0}, {"d": "2025-05-18", "hlp": 1.6456, "borrow": 1.1232, "btc": 106454.26}, {"d": "2025-05-25", "hlp": 1.6496, "borrow": 1.1243, "btc": 109004.19}, {"d": "2025-06-01", "hlp": 1.6531, "borrow": 1.1254, "btc": 105642.93}, {"d": "2025-06-08", "hlp": 1.6563, "borrow": 1.1265, "btc": 105734.0}, {"d": "2025-06-15", "hlp": 1.659, "borrow": 1.1278, "btc": 105594.01}, {"d": "2025-06-22", "hlp": 1.6612, "borrow": 1.1288, "btc": 100963.87}, {"d": "2025-06-29", "hlp": 1.6631, "borrow": 1.1299, "btc": 108356.93}, {"d": "2025-07-06", "hlp": 1.6648, "borrow": 1.131, "btc": 109203.84}, {"d": "2025-07-13", "hlp": 1.668, "borrow": 1.1321, "btc": 119086.64}, {"d": "2025-07-20", "hlp": 1.6722, "borrow": 1.1332, "btc": 117265.12}, {"d": "2025-07-27", "hlp": 1.6763, "borrow": 1.1343, "btc": 119415.55}, {"d": "2025-08-03", "hlp": 1.6804, "borrow": 1.1354, "btc": 114208.8}, {"d": "2025-08-10", "hlp": 1.6846, "borrow": 1.1365, "btc": 119294.01}, {"d": "2025-08-17", "hlp": 1.689, "borrow": 1.1377, "btc": 117405.01}, {"d": "2025-08-24", "hlp": 1.6923, "borrow": 1.1391, "btc": 113493.59}, {"d": "2025-08-31", "hlp": 1.6949, "borrow": 1.1403, "btc": 108246.35}, {"d": "2025-09-07", "hlp": 1.6973, "borrow": 1.1416, "btc": 111137.34}, {"d": "2025-09-14", "hlp": 1.6994, "borrow": 1.1429, "btc": 115268.01}, {"d": "2025-09-21", "hlp": 1.7032, "borrow": 1.1443, "btc": 115232.29}, {"d": "2025-09-28", "hlp": 1.7081, "borrow": 1.1455, "btc": 112163.95}, {"d": "2025-10-05", "hlp": 1.7518, "borrow": 1.1467, "btc": 123482.31}, {"d": "2025-10-12", "hlp": 1.8269, "borrow": 1.148, "btc": 114958.8}, {"d": "2025-10-19", "hlp": 1.8606, "borrow": 1.1492, "btc": 108642.78}, {"d": "2025-10-26", "hlp": 1.8616, "borrow": 1.1503, "btc": 114559.4}, {"d": "2025-11-02", "hlp": 1.8576, "borrow": 1.1515, "btc": 110540.68}, {"d": "2025-11-09", "hlp": 1.8499, "borrow": 1.1528, "btc": 104722.96}, {"d": "2025-11-16", "hlp": 1.8468, "borrow": 1.1541, "btc": 94261.44}, {"d": "2025-11-23", "hlp": 1.8472, "borrow": 1.1553, "btc": 86830.0}, {"d": "2025-11-30", "hlp": 1.8477, "borrow": 1.1564, "btc": 90360.0}, {"d": "2025-12-07", "hlp": 1.8484, "borrow": 1.1574, "btc": 90395.31}, {"d": "2025-12-14", "hlp": 1.8486, "borrow": 1.1585, "btc": 88172.17}, {"d": "2025-12-21", "hlp": 1.8486, "borrow": 1.1595, "btc": 88658.86}, {"d": "2025-12-28", "hlp": 1.8487, "borrow": 1.1605, "btc": 87952.71}, {"d": "2026-01-04", "hlp": 1.8488, "borrow": 1.1616, "btc": 91529.73}, {"d": "2026-01-11", "hlp": 1.8506, "borrow": 1.1626, "btc": 91013.65}, {"d": "2026-01-18", "hlp": 1.8536, "borrow": 1.1636, "btc": 93673.14}, {"d": "2026-01-25", "hlp": 1.8893, "borrow": 1.1647, "btc": 86670.36}, {"d": "2026-02-01", "hlp": 1.9511, "borrow": 1.1658, "btc": 76968.21}, {"d": "2026-02-08", "hlp": 1.9786, "borrow": 1.1668, "btc": 70330.38}, {"d": "2026-02-15", "hlp": 1.9793, "borrow": 1.1676, "btc": 68832.58}, {"d": "2026-02-22", "hlp": 1.9796, "borrow": 1.1684, "btc": 67643.4}, {"d": "2026-03-01", "hlp": 1.9798, "borrow": 1.1692, "btc": 65776.47}, {"d": "2026-03-08", "hlp": 1.9803, "borrow": 1.17, "btc": 65971.2}, {"d": "2026-03-15", "hlp": 1.981, "borrow": 1.1706, "btc": 72815.24}, {"d": "2026-03-22", "hlp": 1.9815, "borrow": 1.1713, "btc": 67859.0}, {"d": "2026-03-29", "hlp": 1.9817, "borrow": 1.172, "btc": 66010.93}, {"d": "2026-04-05", "hlp": 1.9788, "borrow": 1.1728, "btc": 69034.18}, {"d": "2026-04-12", "hlp": 1.9735, "borrow": 1.1736, "btc": 70740.98}, {"d": "2026-04-19", "hlp": 1.9713, "borrow": 1.1747, "btc": 73801.79}, {"d": "2026-04-26", "hlp": 1.9715, "borrow": 1.1771, "btc": 78657.55}, {"d": "2026-05-03", "hlp": 1.9716, "borrow": 1.1783, "btc": 78568.57}, {"d": "2026-05-10", "hlp": 1.9717, "borrow": 1.1793, "btc": 82210.07}, {"d": "2026-05-17", "hlp": 1.9721, "borrow": 1.1803, "btc": 77457.67}, {"d": "2026-05-24", "hlp": 1.9727, "borrow": 1.1814, "btc": 77064.96}, {"d": "2026-05-31", "hlp": 1.9733, "borrow": 1.1824, "btc": 73674.39}, {"d": "2026-06-07", "hlp": 1.9738, "borrow": 1.1833, "btc": 63332.01}, {"d": "2026-06-14", "hlp": 1.9739, "borrow": 1.1843, "btc": 65746.45}, {"d": "2026-06-21", "hlp": 1.9737, "borrow": 1.1852, "btc": 63311.99}, {"d": "2026-06-28", "hlp": 1.9735, "borrow": 1.1861, "btc": 59577.01}, {"d": "2026-07-05", "hlp": 1.9732, "borrow": 1.1872, "btc": 63650.0}, {"d": "2026-07-12", "hlp": 1.9731, "borrow": 1.1881, "btc": 63780.0}, {"d": "2026-07-19", "hlp": 1.9731, "borrow": 1.1891, "btc": 64722.54}, {"d": "2026-07-26", "hlp": 1.9733, "borrow": 1.19, "btc": 65399.99}, {"d": "2026-08-02", "hlp": 1.9736, "borrow": 1.191, "btc": 63570.0}, {"d": "2026-08-09", "hlp": 1.9744, "borrow": 1.192, "btc": 64901.59}, {"d": "2026-08-16", "hlp": 1.9755, "borrow": 1.193, "btc": 62900.0}, {"d": "2026-08-23", "hlp": 1.9782, "borrow": 1.194, "btc": 77734.0}, {"d": "2026-08-30", "hlp": 1.9822, "borrow": 1.195, "btc": 77682.0}, {"d": "2026-09-06", "hlp": 1.9846, "borrow": 1.196, "btc": 80341.83}, {"d": "2026-09-13", "hlp": 1.9859, "borrow": 1.197, "btc": 76842.01}, {"d": "2026-09-20", "hlp": 1.9874, "borrow": 1.1981, "btc": 81178.0}, {"d": "2026-09-27", "hlp": 1.989, "borrow": 1.1991, "btc": 84472.0}, {"d": "2026-10-04", "hlp": 1.9905, "borrow": 1.2002, "btc": 86530.0}, {"d": "2026-10-11", "hlp": 1.9909, "borrow": 1.2006, "btc": 85605.65}], "ltv_path": [{"d": "2025-10-06", "ltv": 0.4051, "btc": 124658.54}, {"d": "2025-10-07", "ltv": 0.4136, "btc": 121332.95}, {"d": "2025-10-08", "ltv": 0.412, "btc": 123306.0}, {"d": "2025-10-09", "ltv": 0.4169, "btc": 121662.4}, {"d": "2025-10-10", "ltv": 0.4892, "btc": 112774.5}, {"d": "2025-10-11", "ltv": 0.4555, "btc": 110644.4}, {"d": "2025-10-12", "ltv": 0.4555, "btc": 114958.8}, {"d": "2025-10-13", "ltv": 0.4393, "btc": 115166.0}, {"d": "2025-10-14", "ltv": 0.4544, "btc": 113028.14}, {"d": "2025-10-15", "ltv": 0.4533, "btc": 110763.28}, {"d": "2025-10-16", "ltv": 0.4649, "btc": 108194.28}, {"d": "2025-10-17", "ltv": 0.4824, "btc": 106431.68}, {"d": "2025-10-18", "ltv": 0.4698, "btc": 107185.01}, {"d": "2025-10-19", "ltv": 0.4709, "btc": 108642.78}, {"d": "2025-10-20", "ltv": 0.4652, "btc": 110532.09}, {"d": "2025-10-21", "ltv": 0.465, "btc": 108297.67}, {"d": "2025-10-22", "ltv": 0.4686, "btc": 107567.44}, {"d": "2025-10-23", "ltv": 0.465, "btc": 110078.18}, {"d": "2025-10-24", "ltv": 0.4558, "btc": 111004.89}, {"d": "2025-10-25", "ltv": 0.4518, "btc": 111646.27}, {"d": "2025-10-26", "ltv": 0.4495, "btc": 114559.4}, {"d": "2025-10-27", "ltv": 0.4394, "btc": 114107.65}, {"d": "2025-10-28", "ltv": 0.4458, "btc": 112898.45}, {"d": "2025-10-29", "ltv": 0.4582, "btc": 110021.29}, {"d": "2025-10-30", "ltv": 0.4707, "btc": 108322.88}, {"d": "2025-10-31", "ltv": 0.4622, "btc": 109608.01}, {"d": "2025-11-01", "ltv": 0.4576, "btc": 110098.1}, {"d": "2025-11-02", "ltv": 0.4573, "btc": 110540.68}, {"d": "2025-11-03", "ltv": 0.4755, "btc": 106583.04}, {"d": "2025-11-04", "ltv": 0.5061, "btc": 101497.22}, {"d": "2025-11-05", "ltv": 0.5061, "btc": 103885.16}, {"d": "2025-11-06", "ltv": 0.4994, "btc": 101346.04}, {"d": "2025-11-07", "ltv": 0.5047, "btc": 103339.08}, {"d": "2025-11-08", "ltv": 0.4939, "btc": 102312.94}, {"d": "2025-11-09", "ltv": 0.4943, "btc": 104722.96}, {"d": "2025-11-10", "ltv": 0.4808, "btc": 106011.13}, {"d": "2025-11-11", "ltv": 0.4893, "btc": 103058.99}, {"d": "2025-11-12", "ltv": 0.4974, "btc": 101654.37}, {"d": "2025-11-13", "ltv": 0.5118, "btc": 99692.02}, {"d": "2025-11-14", "ltv": 0.5335, "btc": 94594.0}, {"d": "2025-11-15", "ltv": 0.5305, "btc": 95596.24}, {"d": "2025-11-16", "ltv": 0.5395, "btc": 94261.44}, {"d": "2025-11-17", "ltv": 0.5501, "btc": 92215.14}, {"d": "2025-11-18", "ltv": 0.5623, "btc": 92960.83}, {"d": "2025-11-19", "ltv": 0.5665, "btc": 91554.96}, {"d": "2025-11-20", "ltv": 0.5831, "btc": 86637.23}, {"d": "2025-11-21", "ltv": 0.623, "btc": 85129.43}, {"d": "2025-11-22", "ltv": 0.6014, "btc": 84739.74}, {"d": "2025-11-23", "ltv": 0.5932, "btc": 86830.0}, {"d": "2025-11-24", "ltv": 0.5891, "btc": 88300.01}, {"d": "2025-11-25", "ltv": 0.5834, "btc": 87369.96}, {"d": "2025-11-26", "ltv": 0.5822, "btc": 90484.02}, {"d": "2025-11-27", "ltv": 0.5578, "btc": 91333.95}, {"d": "2025-11-28", "ltv": 0.5573, "btc": 90890.7}, {"d": "2025-11-29", "ltv": 0.5576, "btc": 90802.44}, {"d": "2025-11-30", "ltv": 0.5565, "btc": 90360.0}, {"d": "2025-12-01", "ltv": 0.5999, "btc": 86286.01}, {"d": "2025-12-02", "ltv": 0.5835, "btc": 91277.88}, {"d": "2025-12-03", "ltv": 0.5527, "btc": 93429.95}, {"d": "2025-12-04", "ltv": 0.5534, "btc": 92078.06}, {"d": "2025-12-05", "ltv": 0.5713, "btc": 89330.04}, {"d": "2025-12-06", "ltv": 0.5659, "btc": 89236.79}, {"d": "2025-12-07", "ltv": 0.5737, "btc": 90395.31}, {"d": "2025-12-08", "ltv": 0.5616, "btc": 90634.34}, {"d": "2025-12-09", "ltv": 0.5624, "btc": 92678.8}, {"d": "2025-12-10", "ltv": 0.5498, "btc": 92015.37}, {"d": "2025-12-11", "ltv": 0.564, "btc": 92513.38}, {"d": "2025-12-12", "ltv": 0.5627, "btc": 90268.42}, {"d": "2025-12-13", "ltv": 0.561, "btc": 90240.01}, {"d": "2025-12-14", "ltv": 0.5751, "btc": 88172.17}, {"d": "2025-12-15", "ltv": 0.5916, "btc": 86432.08}, {"d": "2025-12-16", "ltv": 0.5909, "btc": 87863.42}, {"d": "2025-12-17", "ltv": 0.5906, "btc": 86243.22}, {"d": "2025-12-18", "ltv": 0.5967, "btc": 85516.41}, {"d": "2025-12-19", "ltv": 0.5922, "btc": 88136.94}, {"d": "2025-12-20", "ltv": 0.5741, "btc": 88360.9}, {"d": "2025-12-21", "ltv": 0.5755, "btc": 88658.86}, {"d": "2025-12-22", "ltv": 0.5736, "btc": 88620.79}, {"d": "2025-12-23", "ltv": 0.5823, "btc": 87486.0}, {"d": "2025-12-24", "ltv": 0.5836, "btc": 87669.45}, {"d": "2025-12-25", "ltv": 0.5802, "btc": 87225.27}, {"d": "2025-12-26", "ltv": 0.5821, "btc": 87369.56}, {"d": "2025-12-27", "ltv": 0.5782, "btc": 87877.01}, {"d": "2025-12-28", "ltv": 0.5771, "btc": 87952.71}, {"d": "2025-12-29", "ltv": 0.5813, "btc": 87237.13}, {"d": "2025-12-30", "ltv": 0.5811, "btc": 88485.49}, {"d": "2025-12-31", "ltv": 0.5785, "btc": 87648.22}, {"d": "2026-01-01", "ltv": 0.5766, "btc": 88839.04}, {"d": "2026-01-02", "ltv": 0.5713, "btc": 89995.13}, {"d": "2026-01-03", "ltv": 0.5654, "btc": 90628.01}, {"d": "2026-01-04", "ltv": 0.5572, "btc": 91529.73}, {"d": "2026-01-05", "ltv": 0.5519, "btc": 93859.71}, {"d": "2026-01-06", "ltv": 0.5535, "btc": 93747.97}, {"d": "2026-01-07", "ltv": 0.5572, "btc": 91364.16}, {"d": "2026-01-08", "ltv": 0.5657, "btc": 91099.99}, {"d": "2026-01-09", "ltv": 0.5634, "btc": 90641.28}, {"d": "2026-01-10", "ltv": 0.559, "btc": 90504.7}, {"d": "2026-01-11", "ltv": 0.5602, "btc": 91013.65}, {"d": "2026-01-12", "ltv": 0.5609, "btc": 91296.2}, {"d": "2026-01-13", "ltv": 0.5553, "btc": 95414.0}, {"d": "2026-01-14", "ltv": 0.5347, "btc": 96951.78}, {"d": "2026-01-15", "ltv": 0.5316, "btc": 95604.8}, {"d": "2026-01-16", "ltv": 0.5364, "btc": 95550.94}, {"d": "2026-01-17", "ltv": 0.5323, "btc": 95147.77}, {"d": "2026-01-18", "ltv": 0.5404, "btc": 93673.14}, {"d": "2026-01-19", "ltv": 0.5505, "btc": 92631.0}, {"d": "2026-01-20", "ltv": 0.5757, "btc": 88427.66}, {"d": "2026-01-21", "ltv": 0.58, "btc": 89454.73}, {"d": "2026-01-22", "ltv": 0.5718, "btc": 89559.67}, {"d": "2026-01-23", "ltv": 0.5715, "btc": 89600.26}, {"d": "2026-01-24", "ltv": 0.5678, "btc": 89225.34}, {"d": "2026-01-25", "ltv": 0.5883, "btc": 86670.36}, {"d": "2026-01-26", "ltv": 0.5854, "btc": 88347.08}, {"d": "2026-01-27", "ltv": 0.5802, "btc": 89250.0}, {"d": "2026-01-28", "ltv": 0.5702, "btc": 89299.99}, {"d": "2026-01-29", "ltv": 0.6076, "btc": 84650.16}, {"d": "2026-01-30", "ltv": 0.6247, "btc": 84260.49}, {"d": "2026-01-31", "ltv": 0.6693, "btc": 78741.09}, {"d": "2026-02-01", "ltv": 0.6696, "btc": 76968.21}, {"d": "2026-02-02", "ltv": 0.6795, "btc": 78738.61}, {"d": "2026-02-03", "ltv": 0.695, "btc": 75770.21}, {"d": "2026-02-04", "ltv": 0.7053, "btc": 73165.83}, {"d": "2026-02-05", "ltv": 0.7098, "btc": 62909.86}, {"d": "2026-02-06", "ltv": 0.7376, "btc": 70580.26}, {"d": "2026-02-07", "ltv": 0.6577, "btc": 69289.38}, {"d": "2026-02-08", "ltv": 0.6426, "btc": 70330.38}, {"d": "2026-02-09", "ltv": 0.6481, "btc": 70138.0}, {"d": "2026-02-10", "ltv": 0.653, "btc": 68841.29}, {"d": "2026-02-11", "ltv": 0.6734, "btc": 67082.52}, {"d": "2026-02-12", "ltv": 0.6801, "btc": 66272.17}, {"d": "2026-02-13", "ltv": 0.6723, "btc": 68853.96}, {"d": "2026-02-14", "ltv": 0.6445, "btc": 69822.95}, {"d": "2026-02-15", "ltv": 0.6514, "btc": 68832.58}, {"d": "2026-02-16", "ltv": 0.6583, "btc": 68892.43}, {"d": "2026-02-17", "ltv": 0.6651, "btc": 67503.52}, {"d": "2026-02-18", "ltv": 0.6727, "btc": 66461.0}, {"d": "2026-02-19", "ltv": 0.6752, "btc": 67003.73}, {"d": "2026-02-20", "ltv": 0.6687, "btc": 68020.01}, {"d": "2026-02-21", "ltv": 0.6563, "btc": 67975.93}, {"d": "2026-02-22", "ltv": 0.6598, "btc": 67643.4}, {"d": "2026-02-23", "ltv": 0.6939, "btc": 64656.02}, {"d": "2026-02-24", "ltv": 0.7093, "btc": 64058.15}, {"d": "2026-02-25", "ltv": 0.6938, "btc": 67988.04}, {"d": "2026-02-26", "ltv": 0.6669, "btc": 67485.18}, {"d": "2026-02-27", "ltv": 0.6832, "btc": 65872.1}, {"d": "2026-02-28", "ltv": 0.7037, "btc": 66973.26}, {"d": "2026-03-01", "ltv": 0.6819, "btc": 65776.47}, {"d": "2026-03-02", "ltv": 0.6798, "btc": 68830.06}, {"d": "2026-03-03", "ltv": 0.6706, "btc": 68338.0}, {"d": "2026-03-04", "ltv": 0.6583, "btc": 72666.77}, {"d": "2026-03-05", "ltv": 0.6282, "btc": 70890.72}, {"d": "2026-03-06", "ltv": 0.6551, "btc": 68114.02}, {"d": "2026-03-07", "ltv": 0.6633, "btc": 67262.91}, {"d": "2026-03-08", "ltv": 0.6764, "btc": 65971.2}, {"d": "2026-03-09", "ltv": 0.6744, "btc": 68432.16}, {"d": "2026-03-10", "ltv": 0.6491, "btc": 69948.63}, {"d": "2026-03-11", "ltv": 0.6437, "btc": 70191.86}, {"d": "2026-03-12", "ltv": 0.6416, "btc": 70541.34}, {"d": "2026-03-13", "ltv": 0.6309, "btc": 70930.0}, {"d": "2026-03-14", "ltv": 0.6316, "btc": 71211.95}, {"d": "2026-03-15", "ltv": 0.6268, "btc": 72815.24}, {"d": "2026-03-16", "ltv": 0.6146, "btc": 74884.67}, {"d": "2026-03-17", "ltv": 0.6052, "btc": 73909.36}, {"d": "2026-03-18", "ltv": 0.6301, "btc": 71246.54}, {"d": "2026-03-19", "ltv": 0.6458, "btc": 69930.0}, {"d": "2026-03-20", "ltv": 0.6403, "btc": 70510.73}, {"d": "2026-03-21", "ltv": 0.648, "btc": 68918.12}, {"d": "2026-03-22", "ltv": 0.6597, "btc": 67859.0}, {"d": "2026-03-23", "ltv": 0.6589, "btc": 70906.45}, {"d": "2026-03-24", "ltv": 0.6449, "btc": 70556.74}, {"d": "2026-03-25", "ltv": 0.6313, "btc": 71336.53}, {"d": "2026-03-26", "ltv": 0.6523, "btc": 68820.31}, {"d": "2026-03-27", "ltv": 0.6783, "btc": 66407.28}, {"d": "2026-03-28", "ltv": 0.6744, "btc": 66377.03}, {"d": "2026-03-29", "ltv": 0.6841, "btc": 66010.93}, {"d": "2026-03-30", "ltv": 0.6758, "btc": 66797.37}, {"d": "2026-03-31", "ltv": 0.6739, "btc": 68284.48}, {"d": "2026-04-01", "ltv": 0.6582, "btc": 68113.92}, {"d": "2026-04-02", "ltv": 0.6769, "btc": 66901.99}, {"d": "2026-04-03", "ltv": 0.6712, "btc": 66964.3}, {"d": "2026-04-04", "ltv": 0.6663, "btc": 67300.42}, {"d": "2026-04-05", "ltv": 0.668, "btc": 69034.18}, {"d": "2026-04-06", "ltv": 0.6515, "btc": 68853.66}, {"d": "2026-04-07", "ltv": 0.6571, "btc": 71924.22}, {"d": "2026-04-08", "ltv": 0.6295, "btc": 71069.93}, {"d": "2026-04-09", "ltv": 0.6317, "btc": 71787.97}, {"d": "2026-04-10", "ltv": 0.6233, "btc": 72962.7}, {"d": "2026-04-11", "ltv": 0.614, "btc": 73043.16}, {"d": "2026-04-12", "ltv": 0.6315, "btc": 70740.98}, {"d": "2026-04-13", "ltv": 0.631, "btc": 74417.99}, {"d": "2026-04-14", "ltv": 0.6035, "btc": 74131.55}, {"d": "2026-04-15", "ltv": 0.6058, "btc": 74809.99}, {"d": "2026-04-16", "ltv": 0.6076, "btc": 75154.29}, {"d": "2026-04-17", "ltv": 0.5977, "btc": 77072.0}, {"d": "2026-04-18", "ltv": 0.5905, "btc": 75691.76}, {"d": "2026-04-19", "ltv": 0.6042, "btc": 73801.79}, {"d": "2026-04-20", "ltv": 0.6047, "btc": 75840.97}, {"d": "2026-04-21", "ltv": 0.5961, "btc": 76336.15}, {"d": "2026-04-22", "ltv": 0.586, "btc": 78178.23}, {"d": "2026-04-23", "ltv": 0.5799, "btc": 78257.48}, {"d": "2026-04-24", "ltv": 0.5778, "btc": 77437.13}, {"d": "2026-04-25", "ltv": 0.5788, "btc": 77625.0}, {"d": "2026-04-26", "ltv": 0.5775, "btc": 78657.55}, {"d": "2026-04-27", "ltv": 0.5842, "btc": 77371.32}, {"d": "2026-04-28", "ltv": 0.5904, "btc": 76342.77}, {"d": "2026-04-29", "ltv": 0.5962, "btc": 75780.0}, {"d": "2026-04-30", "ltv": 0.5932, "btc": 76346.57}, {"d": "2026-05-01", "ltv": 0.5856, "btc": 78231.13}, {"d": "2026-05-02", "ltv": 0.5727, "btc": 78686.85}, {"d": "2026-05-03", "ltv": 0.5725, "btc": 78568.57}, {"d": "2026-05-04", "ltv": 0.5717, "btc": 79861.01}, {"d": "2026-05-05", "ltv": 0.5603, "btc": 80905.52}, {"d": "2026-05-06", "ltv": 0.5539, "btc": 81447.01}, {"d": "2026-05-07", "ltv": 0.5626, "btc": 80006.0}, {"d": "2026-05-08", "ltv": 0.5649, "btc": 80193.17}, {"d": "2026-05-09", "ltv": 0.5583, "btc": 80678.4}, {"d": "2026-05-10", "ltv": 0.5573, "btc": 82210.07}, {"d": "2026-05-11", "ltv": 0.5561, "btc": 81745.65}, {"d": "2026-05-12", "ltv": 0.5605, "btc": 80504.47}, {"d": "2026-05-13", "ltv": 0.5683, "btc": 79313.61}, {"d": "2026-05-14", "ltv": 0.5672, "btc": 81089.99}, {"d": "2026-05-15", "ltv": 0.5691, "btc": 79113.21}, {"d": "2026-05-16", "ltv": 0.5767, "btc": 78148.05}, {"d": "2026-05-17", "ltv": 0.5835, "btc": 77457.67}, {"d": "2026-05-18", "ltv": 0.5889, "btc": 77001.87}, {"d": "2026-05-19", "ltv": 0.5882, "btc": 76834.36}, {"d": "2026-05-20", "ltv": 0.5854, "btc": 77552.23}, {"d": "2026-05-21", "ltv": 0.584, "btc": 77615.52}, {"d": "2026-05-22", "ltv": 0.5946, "btc": 75539.5}, {"d": "2026-05-23", "ltv": 0.6033, "btc": 76752.01}, {"d": "2026-05-24", "ltv": 0.5889, "btc": 77064.96}, {"d": "2026-05-25", "ltv": 0.5828, "btc": 77322.01}, {"d": "2026-05-26", "ltv": 0.5924, "btc": 75930.01}, {"d": "2026-05-27", "ltv": 0.6039, "btc": 74449.3}, {"d": "2026-05-28", "ltv": 0.6178, "btc": 73617.51}, {"d": "2026-05-29", "ltv": 0.6185, "btc": 73460.78}, {"d": "2026-05-30", "ltv": 0.6126, "btc": 73884.38}, {"d": "2026-05-31", "ltv": 0.6112, "btc": 73674.39}, {"d": "2026-06-01", "ltv": 0.6347, "btc": 71408.9}, {"d": "2026-06-02", "ltv": 0.6779, "btc": 66760.83}, {"d": "2026-06-03", "ltv": 0.7002, "btc": 64142.75}, {"d": "2026-06-04", "ltv": 0.7311, "btc": 63885.99}, {"d": "2026-06-05", "ltv": 0.7591, "btc": 61056.47}, {"d": "2026-06-06", "ltv": 0.7545, "btc": 60884.62}, {"d": "2026-06-07", "ltv": 0.7391, "btc": 63332.01}, {"d": "2026-06-08", "ltv": 0.7195, "btc": 63085.99}, {"d": "2026-06-09", "ltv": 0.7388, "btc": 61730.0}, {"d": "2026-06-10", "ltv": 0.7392, "btc": 61510.99}, {"d": "2026-06-11", "ltv": 0.7302, "btc": 63625.99}, {"d": "2026-06-12", "ltv": 0.7149, "btc": 63580.01}, {"d": "2026-06-13", "ltv": 0.7084, "btc": 64458.01}, {"d": "2026-06-14", "ltv": 0.7056, "btc": 65746.45}, {"d": "2026-06-15", "ltv": 0.6876, "btc": 66328.74}, {"d": "2026-06-16", "ltv": 0.6876, "btc": 65675.01}, {"d": "2026-06-17", "ltv": 0.7032, "btc": 64509.4}, {"d": "2026-06-18", "ltv": 0.7218, "btc": 62958.01}, {"d": "2026-06-19", "ltv": 0.7214, "btc": 63543.91}, {"d": "2026-06-20", "ltv": 0.7116, "btc": 64298.01}, {"d": "2026-06-21", "ltv": 0.7107, "btc": 63311.99}, {"d": "2026-06-22", "ltv": 0.7103, "btc": 64020.01}, {"d": "2026-06-23", "ltv": 0.7261, "btc": 62734.57}, {"d": "2026-06-24", "ltv": 0.761, "btc": 61077.99}, {"d": "2026-06-25", "ltv": 0.7741, "btc": 59794.0}, {"d": "2026-06-26", "ltv": 0.7712, "btc": 60097.27}, {"d": "2026-06-27", "ltv": 0.7517, "btc": 60029.0}, {"d": "2026-06-28", "ltv": 0.7639, "btc": 59577.01}, {"d": "2026-06-29", "ltv": 0.7641, "btc": 60260.21}, {"d": "2026-06-30", "ltv": 0.7734, "btc": 58624.71}, {"d": "2026-07-01", "ltv": 0.7789, "btc": 60024.0}, {"d": "2026-07-02", "ltv": 0.7556, "btc": 61560.0}, {"d": "2026-07-03", "ltv": 0.7352, "btc": 62583.26}, {"d": "2026-07-04", "ltv": 0.7226, "btc": 63144.01}, {"d": "2026-07-05", "ltv": 0.7214, "btc": 63650.0}, {"d": "2026-07-06", "ltv": 0.7348, "btc": 64042.02}, {"d": "2026-07-07", "ltv": 0.7189, "btc": 63363.99}, {"d": "2026-07-08", "ltv": 0.7321, "btc": 62290.0}, {"d": "2026-07-09", "ltv": 0.7303, "btc": 63230.0}, {"d": "2026-07-10", "ltv": 0.7162, "btc": 64161.72}, {"d": "2026-07-11", "ltv": 0.7062, "btc": 63819.0}, {"d": "2026-07-12", "ltv": 0.7083, "btc": 63780.0}, {"d": "2026-07-13", "ltv": 0.7292, "btc": 62334.52}, {"d": "2026-07-14", "ltv": 0.724, "btc": 65043.98}, {"d": "2026-07-15", "ltv": 0.6993, "btc": 64756.28}, {"d": "2026-07-16", "ltv": 0.7074, "btc": 63830.2}, {"d": "2026-07-17", "ltv": 0.7212, "btc": 63931.67}, {"d": "2026-07-18", "ltv": 0.7061, "btc": 64834.22}, {"d": "2026-07-19", "ltv": 0.7018, "btc": 64722.54}, {"d": "2026-07-20", "ltv": 0.715, "btc": 65255.51}, {"d": "2026-07-21", "ltv": 0.6926, "btc": 66556.16}, {"d": "2026-07-22", "ltv": 0.6884, "btc": 66114.49}, {"d": "2026-07-23", "ltv": 0.6981, "btc": 65098.97}, {"d": "2026-07-24", "ltv": 0.7082, "btc": 64139.99}, {"d": "2026-07-25", "ltv": 0.7075, "btc": 64375.0}, {"d": "2026-07-26", "ltv": 0.7022, "btc": 65399.99}, {"d": "2026-07-27", "ltv": 0.7099, "btc": 63755.86}, {"d": "2026-07-28", "ltv": 0.7198, "btc": 63915.0}, {"d": "2026-07-29", "ltv": 0.7139, "btc": 63984.28}, {"d": "2026-07-30", "ltv": 0.7102, "btc": 64780.02}, {"d": "2026-07-31", "ltv": 0.7232, "btc": 62887.88}, {"d": "2026-08-01", "ltv": 0.7255, "btc": 62823.64}, {"d": "2026-08-02", "ltv": 0.7195, "btc": 63570.0}, {"d": "2026-08-03", "ltv": 0.7254, "btc": 63520.0}, {"d": "2026-08-04", "ltv": 0.7138, "btc": 64106.56}, {"d": "2026-08-05", "ltv": 0.7076, "btc": 64665.23}, {"d": "2026-08-06", "ltv": 0.7045, "btc": 64323.61}, {"d": "2026-08-07", "ltv": 0.7046, "btc": 64923.19}, {"d": "2026-08-08", "ltv": 0.698, "btc": 64962.6}, {"d": "2026-08-09", "ltv": 0.6986, "btc": 64901.59}, {"d": "2026-08-10", "ltv": 0.7088, "btc": 63970.01}, {"d": "2026-08-11", "ltv": 0.7153, "btc": 63600.0}, {"d": "2026-08-12", "ltv": 0.7146, "btc": 63479.99}, {"d": "2026-08-13", "ltv": 0.7204, "btc": 63490.86}, {"d": "2026-08-14", "ltv": 0.7236, "btc": 63043.56}, {"d": "2026-08-15", "ltv": 0.7192, "btc": 63086.01}, {"d": "2026-08-16", "ltv": 0.7217, "btc": 62900.0}, {"d": "2026-08-17", "ltv": 0.7213, "btc": 64532.1}, {"d": "2026-08-18", "ltv": 0.707, "btc": 64725.42}, {"d": "2026-08-19", "ltv": 0.7056, "btc": 69334.79}, {"d": "2026-08-20", "ltv": 0.6572, "btc": 73025.15}, {"d": "2026-08-21", "ltv": 0.6201, "btc": 78338.03}, {"d": "2026-08-22", "ltv": 0.5921, "btc": 77074.93}, {"d": "2026-08-23", "ltv": 0.5996, "btc": 77734.0}, {"d": "2026-08-24", "ltv": 0.5909, "btc": 78992.75}, {"d": "2026-08-25", "ltv": 0.582, "btc": 78539.14}, {"d": "2026-08-26", "ltv": 0.5837, "btc": 79023.75}, {"d": "2026-08-27", "ltv": 0.577, "btc": 80249.58}, {"d": "2026-08-28", "ltv": 0.5895, "btc": 77845.87}, {"d": "2026-08-29", "ltv": 0.5858, "btc": 78230.0}, {"d": "2026-08-30", "ltv": 0.5888, "btc": 77682.0}, {"d": "2026-08-31", "ltv": 0.5859, "btc": 78581.29}, {"d": "2026-09-01", "ltv": 0.5934, "btc": 77439.0}, {"d": "2026-09-02", "ltv": 0.5947, "btc": 77340.01}, {"d": "2026-09-03", "ltv": 0.5893, "btc": 81270.37}, {"d": "2026-09-04", "ltv": 0.5767, "btc": 79660.77}, {"d": "2026-09-05", "ltv": 0.5711, "btc": 79831.75}, {"d": "2026-09-06", "ltv": 0.5727, "btc": 80341.83}, {"d": "2026-09-07", "ltv": 0.5768, "btc": 79112.01}, {"d": "2026-09-08", "ltv": 0.5847, "btc": 78455.8}, {"d": "2026-09-09", "ltv": 0.5837, "btc": 78306.43}, {"d": "2026-09-10", "ltv": 0.5937, "btc": 76568.72}, {"d": "2026-09-11", "ltv": 0.597, "btc": 77225.7}, {"d": "2026-09-12", "ltv": 0.5893, "btc": 77278.73}, {"d": "2026-09-13", "ltv": 0.5936, "btc": 76842.01}, {"d": "2026-09-14", "ltv": 0.5946, "btc": 78189.21}, {"d": "2026-09-15", "ltv": 0.6059, "btc": 75644.48}, {"d": "2026-09-16", "ltv": 0.6052, "btc": 76206.01}, {"d": "2026-09-17", "ltv": 0.5978, "btc": 76417.01}, {"d": "2026-09-18", "ltv": 0.5956, "btc": 80883.87}, {"d": "2026-09-19", "ltv": 0.5622, "btc": 81249.99}, {"d": "2026-09-20", "ltv": 0.5673, "btc": 81178.0}, {"d": "2026-09-21", "ltv": 0.5623, "btc": 86620.0}, {"d": "2026-09-22", "ltv": 0.5342, "btc": 86208.56}, {"d": "2026-09-23", "ltv": 0.5446, "btc": 84397.6}, {"d": "2026-09-24", "ltv": 0.5487, "btc": 84410.24}, {"d": "2026-09-25", "ltv": 0.5468, "btc": 84099.99}, {"d": "2026-09-26", "ltv": 0.5428, "btc": 84433.1}, {"d": "2026-09-27", "ltv": 0.5408, "btc": 84472.0}, {"d": "2026-09-28", "ltv": 0.5511, "btc": 83500.01}, {"d": "2026-09-29", "ltv": 0.5497, "btc": 83663.66}, {"d": "2026-09-30", "ltv": 0.5486, "btc": 83623.6}, {"d": "2026-10-01", "ltv": 0.5472, "btc": 84880.05}, {"d": "2026-10-02", "ltv": 0.5427, "btc": 84518.01}, {"d": "2026-10-03", "ltv": 0.5391, "btc": 84753.56}, {"d": "2026-10-04", "ltv": 0.5375, "btc": 86530.0}, {"d": "2026-10-05", "ltv": 0.536, "btc": 85766.87}, {"d": "2026-10-06", "ltv": 0.535, "btc": 85605.65}], "liquidation": ["2026-02-05"], "yearly": [{"year": 2024, "hlp": 0.5797, "borrow": 0.0908, "days": 366}, {"year": 2025, "hlp": 0.1703, "borrow": 0.0585, "days": 365}, {"year": 2026, "hlp": 0.0769, "borrow": 0.0336, "days": 279}]};
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtK = v => "$" + Math.round(v / 1000) + "k";
+const fmtPct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+const fmtDate = s => new Date(s + "T00:00:00Z").toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+const NS = "http://www.w3.org/2000/svg";
+const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent && parent.appendChild(e); return e; };
+
+function niceTicks(min, max, n = 5) {
+  const span = max - min, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= step0);
+  const ticks = []; for (let t = Math.ceil(min / step) * step; t <= max + 1e-9; t += step) ticks.push(+t.toFixed(10));
+  return ticks;
+}
+
+function lineChart(id, rows, series, opts) {
+  const host = document.getElementById(id);
+  const W = 760, H = opts.h || 320, m = { t: 14, r: opts.r || 92, b: 28, l: 54 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": opts.label }, host);
+  const xs = rows.map(r => new Date(r.d).getTime());
+  const x0 = xs[0], x1 = xs[xs.length - 1];
+  let vals = rows.flatMap(r => series.map(s => s.get(r))).concat(opts.extraY || []);
+  let lo = opts.yMin ?? Math.min(...vals), hi = Math.max(...vals);
+  const ticks = niceTicks(lo, hi); lo = Math.min(lo, ticks[0]); hi = Math.max(hi, ticks[ticks.length - 1]);
+  const X = t => m.l + (t - x0) / (x1 - x0) * (W - m.l - m.r);
+  const Y = v => m.t + (1 - (v - lo) / (hi - lo)) * (H - m.t - m.b);
+  ticks.forEach(t => {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: "var(--rule)", "stroke-width": 1 }, svg);
+    el("text", { x: m.l - 8, y: Y(t) + 4, "text-anchor": "end" }, svg).textContent = opts.fmtY(t);
+  });
+  // year ticks
+  const y0 = new Date(x0).getUTCFullYear(), y1 = new Date(x1).getUTCFullYear();
+  for (let y = y0; y <= y1; y++) for (const mo of opts.months || [0]) {
+    const t = Date.UTC(y, mo, 1); if (t < x0 || t > x1) continue;
+    el("line", { x1: X(t), x2: X(t), y1: H - m.b, y2: H - m.b + 4, stroke: "var(--axis)" }, svg);
+    const lab = (opts.months && opts.months.length > 1) ? new Date(t).toLocaleDateString("en-GB", { month: "short", year: "2-digit", timeZone: "UTC" }) : y;
+    el("text", { x: X(t), y: H - 8, "text-anchor": "middle" }, svg).textContent = lab;
+  }
+  el("line", { x1: m.l, x2: W - m.r, y1: H - m.b, y2: H - m.b, stroke: "var(--axis)" }, svg);
+  (opts.refs || []).forEach(r => {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(r.v), y2: Y(r.v), stroke: r.color, "stroke-width": 1.5, "stroke-dasharray": "5 4" }, svg);
+  });
+  series.forEach(s => {
+    const d = rows.map((r, i) => `${i ? "L" : "M"}${X(xs[i]).toFixed(1)},${Y(s.get(r)).toFixed(1)}`).join("");
+    el("path", { d, fill: "none", stroke: s.color, "stroke-width": 2, "stroke-linejoin": "round", "stroke-linecap": "round" }, svg);
+  });
+  // direct end labels, nudged apart
+  const ends = series.map(s => ({ s, y: Y(s.get(rows[rows.length - 1])) })).sort((a, b) => a.y - b.y);
+  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
+  ends.forEach(e => {
+    el("circle", { cx: X(x1), cy: Y(e.s.get(rows[rows.length - 1])), r: 4, fill: e.s.color, stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    el("text", { x: X(x1) + 9, y: e.y + 4, class: "dl" }, svg).textContent = e.s.endLabel(rows[rows.length - 1]);
+  });
+  (opts.markers || []).forEach(mk => {
+    const i = rows.findIndex(r => r.d >= mk.d); if (i < 0) return;
+    const cx = X(xs[i]), cy = Y(mk.get(rows[i]));
+    el("circle", { cx, cy, r: 6, fill: "var(--critical)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    el("text", { x: cx - 10, y: cy - 2, "text-anchor": "end", class: "dl" }, svg).textContent = mk.label;
+  });
+  // hover
+  const cross = el("line", { y1: m.t, y2: H - m.b, stroke: "var(--muted)", "stroke-width": 1, opacity: 0 }, svg);
+  const dots = series.map(s => el("circle", { r: 4.5, fill: s.color, stroke: "var(--surface)", "stroke-width": 2, opacity: 0 }, svg));
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; host.appendChild(tip);
+  const hit = el("rect", { x: m.l, y: 0, width: W - m.l - m.r, height: H, fill: "transparent" }, svg);
+  const move = ev => {
+    const p = svg.getBoundingClientRect(), sx = (ev.clientX - p.left) / p.width * W;
+    const t = x0 + (sx - m.l) / (W - m.l - m.r) * (x1 - x0);
+    let i = 0, best = Infinity; xs.forEach((v, j) => { const dd = Math.abs(v - t); if (dd < best) { best = dd; i = j; } });
+    const cx = X(xs[i]); cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("opacity", .6);
+    series.forEach((s, k) => { dots[k].setAttribute("cx", cx); dots[k].setAttribute("cy", Y(s.get(rows[i]))); dots[k].setAttribute("opacity", 1); });
+    tip.innerHTML = `<b>${(opts.tipDate || (r => "Week ending " + fmtDate(r.d)))(rows[i])}</b><br>` + series.map(s => `<span class="sw" style="background:${s.color}"></span>${s.name}: <b>${s.fmt(s.get(rows[i]))}</b>`).join("<br>") + (opts.tipExtra ? "<br>" + opts.tipExtra(rows[i]) : "");
+    tip.hidden = false; tip.style.left = (cx / W * p.width + 6) + "px"; tip.style.top = (Math.min(...series.map(s => Y(s.get(rows[i])))) / H * p.height + 8) + "px";
+  };
+  hit.addEventListener("pointermove", move);
+  hit.addEventListener("pointerleave", () => { tip.hidden = true; cross.setAttribute("opacity", 0); dots.forEach(d => d.setAttribute("opacity", 0)); });
+}
+
+function barChart(id, rows) {
+  const host = document.getElementById(id);
+  const W = 760, H = 280, m = { t: 22, r: 16, b: 30, l: 54 };
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "HLP return vs borrow cost by year" }, host);
+  const hi = 0.6, ticks = niceTicks(0, hi);
+  const Y = v => m.t + (1 - v / hi) * (H - m.t - m.b);
+  ticks.forEach(t => {
+    el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: "var(--rule)" }, svg);
+    el("text", { x: m.l - 8, y: Y(t) + 4, "text-anchor": "end" }, svg).textContent = Math.round(t * 100) + "%";
+  });
+  const gw = (W - m.l - m.r) / rows.length, bw = Math.min(64, gw * .28);
+  const tip = document.createElement("div"); tip.className = "tip"; tip.hidden = true; host.appendChild(tip);
+  rows.forEach((r, i) => {
+    const cx = m.l + gw * (i + .5);
+    [["hlp", "var(--s1)", "HLP return", -1], ["borrow", "var(--s2)", "Borrow cost", 1]].forEach(([k, c, name, side]) => {
+      const x = cx + side * (bw / 2 + 1) - bw / 2, y = Y(r[k]), h = Y(0) - y;
+      const rr = Math.min(4, h);
+      el("path", { d: `M${x},${Y(0)}V${y + rr}Q${x},${y} ${x + rr},${y}H${x + bw - rr}Q${x + bw},${y} ${x + bw},${y + rr}V${Y(0)}Z`, fill: c }, svg);
+      el("text", { x: x + bw / 2, y: y - 6, "text-anchor": "middle", class: "dl" }, svg).textContent = fmtPct(r[k]);
+      const hit = el("rect", { x: x - 4, y: m.t, width: bw + 8, height: Y(0) - m.t, fill: "transparent" }, svg);
+      hit.addEventListener("pointerenter", () => {
+        const p = svg.getBoundingClientRect();
+        tip.innerHTML = `<b>${r.year}${r.year === 2026 ? " to date" : ""}</b><br><span class="sw" style="background:${c}"></span>${name}: <b>${fmtPct(r[k])}</b><br>Spread: <b>${fmtPct(r.hlp - r.borrow)}</b>`;
+        tip.hidden = false; tip.style.left = ((x + bw / 2) / W * p.width + 6) + "px"; tip.style.top = (y / H * p.height + 8) + "px";
+      });
+      hit.addEventListener("pointerleave", () => tip.hidden = true);
+    });
+    el("text", { x: cx, y: H - 8, "text-anchor": "middle" }, svg).textContent = r.year === 2026 ? "2026 YTD" : r.year;
+  });
+  el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: "var(--axis)" }, svg);
+}
+
+function render() {
+  document.querySelectorAll(".chart").forEach(c => c.innerHTML = "");
+  const S1 = css("--s1"), S2 = css("--s2"), S3 = css("--s3"), CR = css("--critical");
+  const eq = DATA.equity.slice(0, -1).concat([{ ...DATA.equity.at(-1), d: "2026-10-06" }]);
+  lineChart("c-equity", eq, [
+    { name: "Carry, monthly", color: S1, get: r => r.carry, fmt: fmtK, endLabel: r => fmtK(r.carry) },
+    { name: "Carry, static", color: S3, get: r => r.static, fmt: fmtK, endLabel: r => fmtK(r.static) },
+    { name: "BTC buy & hold", color: S2, get: r => r.hodl, fmt: fmtK, endLabel: r => fmtK(r.hodl) },
+  ], { label: "Portfolio value over time", fmtY: fmtK, yMin: 50000, r: 60 });
+
+  const idx = DATA.index.slice(0, -1).concat([{ ...DATA.index.at(-1), d: "2026-10-06" }]);
+  lineChart("c-index", idx, [
+    { name: "HLP", color: S1, get: r => r.hlp - 1, fmt: v => "+" + fmtPct(v), endLabel: r => "+" + fmtPct(r.hlp - 1, 0) },
+    { name: "Borrow cost", color: S2, get: r => r.borrow - 1, fmt: v => "+" + fmtPct(v), endLabel: r => "+" + fmtPct(r.borrow - 1, 0) },
+  ], { label: "HLP cumulative return vs borrow cost", fmtY: v => Math.round(v * 100) + "%", yMin: 0, r: 52,
+       tipExtra: r => "BTC: <b>$" + Math.round(r.btc).toLocaleString("en-US") + "</b>" });
+
+  barChart("c-yearly", DATA.yearly);
+
+  lineChart("c-ltv", DATA.ltv_path, [
+    { name: "LTV", color: S1, get: r => r.ltv, fmt: v => fmtPct(v), endLabel: r => fmtPct(r.ltv, 0) },
+  ], { label: "Loan-to-value of a static position opened at the top", fmtY: v => Math.round(v * 100) + "%", yMin: 0.3, extraY: [0.8],
+       r: 44, months: [0, 3, 6, 9], refs: [{ v: 0.78, color: CR }],
+       markers: DATA.liquidation.map(d => ({ d, get: r => r.ltv, label: "Liquidated" })),
+       tipDate: r => fmtDate(r.d), tipExtra: r => "BTC close: <b>$" + Math.round(r.btc).toLocaleString("en-US") + "</b>" });
+}
+render();
+const mq = matchMedia("(prefers-color-scheme: dark)");
+mq.addEventListener?.("change", render);
+new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+</script>

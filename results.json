@@ -1,0 +1,287 @@
+{
+ "main (2024-01 to now)": {
+  "BTC buy & hold": {
+   "final": 193573.82398,
+   "total_return": 0.93574,
+   "cagr": 0.27056,
+   "vol": 0.47112,
+   "sharpe": 0.63499,
+   "max_dd": -0.52972,
+   "max_ltv": 0.0,
+   "liquidations": 0.0,
+   "interest_paid": 0.0,
+   "hlp_earned": 0.0
+  },
+  "Carry 40%, static": {
+   "final": 224521.79757,
+   "total_return": 1.24522,
+   "cagr": 0.34063,
+   "vol": 0.423,
+   "sharpe": 0.78353,
+   "max_dd": -0.46591,
+   "max_ltv": 0.44896,
+   "liquidations": 0.0,
+   "interest_paid": 8002.12532,
+   "hlp_earned": 38950.09891
+  },
+  "Carry 40%, monthly rebal": {
+   "final": 236186.38504,
+   "total_return": 1.36186,
+   "cagr": 0.36544,
+   "vol": 0.46892,
+   "sharpe": 0.78927,
+   "max_dd": -0.51182,
+   "max_ltv": 0.51918,
+   "liquidations": 0.0,
+   "interest_paid": 14875.99543,
+   "hlp_earned": 51255.04995
+  },
+  "1.4x BTC (borrow to buy BTC)": {
+   "final": 198549.73399,
+   "total_return": 0.9855,
+   "cagr": 0.28247,
+   "vol": 0.6616,
+   "sharpe": 0.6281,
+   "max_dd": -0.67201,
+   "max_ltv": 0.37084,
+   "liquidations": 0.0,
+   "interest_paid": 14642.13444,
+   "hlp_earned": 0.0
+  }
+ },
+ "full (2023-06 to now)": {
+  "BTC buy & hold": {
+   "final": 318891.2953,
+   "total_return": 2.18891,
+   "cagr": 0.41431,
+   "vol": 0.45933,
+   "sharpe": 0.87413,
+   "max_dd": -0.52972,
+   "max_ltv": 0.0,
+   "liquidations": 0.0,
+   "interest_paid": 0.0,
+   "hlp_earned": 0.0
+  },
+  "Carry 40%, static": {
+   "final": 387040.2047,
+   "total_return": 2.8704,
+   "cagr": 0.49852,
+   "vol": 0.39438,
+   "sharpe": 1.09498,
+   "max_dd": -0.45112,
+   "max_ltv": 0.43208,
+   "liquidations": 0.0,
+   "interest_paid": 9657.54279,
+   "hlp_earned": 77806.45218
+  },
+  "Carry 40%, monthly rebal": {
+   "final": 458757.73414,
+   "total_return": 3.58758,
+   "cagr": 0.57657,
+   "vol": 0.45649,
+   "sharpe": 1.11467,
+   "max_dd": -0.51182,
+   "max_ltv": 0.51918,
+   "liquidations": 0.0,
+   "interest_paid": 30640.87819,
+   "hlp_earned": 120080.03305
+  },
+  "1.4x BTC (borrow to buy BTC)": {
+   "final": 382766.87043,
+   "total_return": 2.82767,
+   "cagr": 0.49374,
+   "vol": 0.64344,
+   "sharpe": 0.86541,
+   "max_dd": -0.67201,
+   "max_ltv": 0.37084,
+   "liquidations": 0.0,
+   "interest_paid": 29866.09931,
+   "hlp_earned": 0.0
+  }
+ },
+ "last 12m": {
+  "BTC buy & hold": {
+   "final": 70483.77572,
+   "total_return": -0.29516,
+   "cagr": -0.2953,
+   "vol": 0.44744,
+   "sharpe": -0.63633,
+   "max_dd": -0.52456,
+   "max_ltv": 0.0,
+   "liquidations": 0.0,
+   "interest_paid": 0.0,
+   "hlp_earned": 0.0
+  },
+  "Carry 40%, static": {
+   "final": 65153.71684,
+   "total_return": -0.34846,
+   "cagr": -0.34877,
+   "vol": 0.34545,
+   "sharpe": -1.16577,
+   "max_dd": -0.48876,
+   "max_ltv": 0.73255,
+   "liquidations": 1.0,
+   "interest_paid": 1268.30047,
+   "hlp_earned": 4912.99842
+  },
+  "Carry 40%, monthly rebal": {
+   "final": 72843.21787,
+   "total_return": -0.27157,
+   "cagr": -0.27163,
+   "vol": 0.44515,
+   "sharpe": -0.56788,
+   "max_dd": -0.50919,
+   "max_ltv": 0.51918,
+   "liquidations": 0.0,
+   "interest_paid": 1261.53364,
+   "hlp_earned": 3872.26195
+  },
+  "1.4x BTC (borrow to buy BTC)": {
+   "final": 56427.48881,
+   "total_return": -0.43573,
+   "cagr": -0.43604,
+   "vol": 0.63965,
+   "sharpe": -0.62892,
+   "max_dd": -0.66854,
+   "max_ltv": 0.37085,
+   "liquidations": 0.0,
+   "interest_paid": 1031.10742,
+   "hlp_earned": 0.0
+  }
+ },
+ "yearly": {
+  "2023": {
+   "hlp_return": 0.47812,
+   "avg_borrow_apr": 0.05757,
+   "btc_return": 0.57669,
+   "days": 214,
+   "spread": 0.44436
+  },
+  "2024": {
+   "hlp_return": 0.57971,
+   "avg_borrow_apr": 0.09051,
+   "btc_return": 1.11808,
+   "days": 366,
+   "spread": 0.48895
+  },
+  "2025": {
+   "hlp_return": 0.17031,
+   "avg_borrow_apr": 0.05852,
+   "btc_return": -0.07341,
+   "days": 365,
+   "spread": 0.11179
+  },
+  "2026": {
+   "hlp_return": 0.07688,
+   "avg_borrow_apr": 0.04389,
+   "btc_return": -0.0364,
+   "days": 279,
+   "spread": 0.04333
+  }
+ },
+ "sensitivity": {
+  "0.0": {
+   "final": 193573.82398,
+   "total_return": 0.93574,
+   "cagr": 0.27056,
+   "vol": 0.47112,
+   "sharpe": 0.63499,
+   "max_dd": -0.52972,
+   "max_ltv": 0.0,
+   "liquidations": 0.0,
+   "interest_paid": 0.0,
+   "hlp_earned": 0.0,
+   "crash_to_liquidate": 1.0
+  },
+  "0.2": {
+   "final": 213970.41214,
+   "total_return": 1.1397,
+   "cagr": 0.31748,
+   "vol": 0.46997,
+   "sharpe": 0.71251,
+   "max_dd": -0.52076,
+   "max_ltv": 0.25959,
+   "liquidations": 0.0,
+   "interest_paid": 6938.97979,
+   "hlp_earned": 24203.63791,
+   "crash_to_liquidate": 0.74359
+  },
+  "0.3": {
+   "final": 224842.6164,
+   "total_return": 1.24843,
+   "cagr": 0.34133,
+   "vol": 0.46943,
+   "sharpe": 0.75098,
+   "max_dd": -0.51628,
+   "max_ltv": 0.38938,
+   "liquidations": 0.0,
+   "interest_paid": 10776.97104,
+   "hlp_earned": 37358.62721,
+   "crash_to_liquidate": 0.61538
+  },
+  "0.4": {
+   "final": 236186.38504,
+   "total_return": 1.36186,
+   "cagr": 0.36544,
+   "vol": 0.46892,
+   "sharpe": 0.78927,
+   "max_dd": -0.51182,
+   "max_ltv": 0.51918,
+   "liquidations": 0.0,
+   "interest_paid": 14875.99543,
+   "hlp_earned": 51255.04995,
+   "crash_to_liquidate": 0.48718
+  },
+  "0.5": {
+   "final": 248019.08908,
+   "total_return": 1.48019,
+   "cagr": 0.38982,
+   "vol": 0.46842,
+   "sharpe": 0.82738,
+   "max_dd": -0.50736,
+   "max_ltv": 0.64899,
+   "liquidations": 0.0,
+   "interest_paid": 19248.12552,
+   "hlp_earned": 65923.6655,
+   "crash_to_liquidate": 0.35897
+  },
+  "0.6": {
+   "final": 199230.51053,
+   "total_return": 0.99231,
+   "cagr": 0.28387,
+   "vol": 0.45923,
+   "sharpe": 0.66318,
+   "max_dd": -0.56296,
+   "max_ltv": 0.76151,
+   "liquidations": 4.0,
+   "interest_paid": 20910.35063,
+   "hlp_earned": 74887.05069,
+   "crash_to_liquidate": 0.23077
+  },
+  "0.7": {
+   "final": 154471.46584,
+   "total_return": 0.54471,
+   "cagr": 0.1709,
+   "vol": 0.448,
+   "sharpe": 0.46392,
+   "max_dd": -0.57939,
+   "max_ltv": 0.81914,
+   "liquidations": 16.0,
+   "interest_paid": 18319.30176,
+   "hlp_earned": 75890.64115,
+   "crash_to_liquidate": 0.10256
+  }
+ },
+ "rolling": {
+  "mean": 0.17449707765350395,
+  "median": 0.058069591736131326,
+  "min": 0.028091044134924886,
+  "max": 0.8248010222198878,
+  "win_rate": 1.0
+ },
+ "hlp_shock": {
+  "day": "2025-05-20",
+  "base": 236186.3850371004,
+  "shock": 219004.58555732504
+ }
+}
